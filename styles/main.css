@@ -757,6 +757,40 @@ body {
   white-space: nowrap;
 }
 
+.timer-infusion-select {
+  width: 100%;
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16px;
+}
+
+.timer-infusion-select label {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.timer-infusion-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-size: 0.9rem;
+  background: var(--color-warm-white);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.timer-infusion-select select:focus {
+  border-color: var(--color-primary);
+}
+
 .infusion-list {
   display: flex;
   flex-direction: column;

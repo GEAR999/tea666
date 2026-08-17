@@ -644,6 +644,44 @@ function renderInfusionList() {
     div.innerHTML = '<span>第' + (i + 1) + '泡</span><span>' + timeStr + '</span>';
     list.appendChild(div);
   });
+
+  // Update infusion select dropdown
+  updateInfusionSelect();
+}
+
+// Update infusion select dropdown
+function updateInfusionSelect() {
+  var select = document.getElementById('infusion-select');
+  var container = document.getElementById('infusion-select-container');
+
+  if (!select || !container) return;
+
+  // Clear existing options
+  select.innerHTML = '';
+
+  // Only show dropdown if there are multiple infusions
+  if (timerState.infusionTimes.length <= 1) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  // Add options for each infusion
+  timerState.infusionTimes.forEach(function(time, i) {
+    var option = document.createElement('option');
+    option.value = i;
+
+    var min = Math.floor(time / 60);
+    var sec = time % 60;
+    var timeStr = min > 0 ? min + '分' + (sec > 0 ? sec + '秒' : '') : sec + '秒';
+
+    option.textContent = '第' + (i + 1) + '泡（' + timeStr + '）';
+    if (i === timerState.currentInfusion) {
+      option.selected = true;
+    }
+    select.appendChild(option);
+  });
 }
 
 // Apply custom time from input
@@ -674,9 +712,38 @@ function applyCustomTime() {
   document.getElementById('timer-status').textContent = '自定义 ' + seconds + '秒';
   document.getElementById('timer-display').classList.remove('finished');
   document.getElementById('infusion-info').style.display = 'none';
+  document.getElementById('infusion-select-container').style.display = 'none';
 
   updateTimerDisplay();
   showToast('已设置冲泡时间：' + seconds + '秒');
+}
+
+// Select infusion from dropdown
+function selectInfusion(infusionIndex) {
+  var index = parseInt(infusionIndex, 10);
+  if (isNaN(index) || index < 0 || index >= timerState.infusionTimes.length) {
+    return;
+  }
+
+  // Stop current timer if running
+  if (timerState.running) {
+    clearInterval(timerState.interval);
+    timerState.running = false;
+  }
+
+  timerState.currentInfusion = index;
+  timerState.totalTime = timerState.infusionTimes[index];
+  timerState.remaining = timerState.totalTime;
+  timerState.paused = false;
+
+  // Update UI
+  document.getElementById('timer-start-btn').textContent = '开始';
+  document.getElementById('timer-status').textContent = '第' + (index + 1) + '泡';
+  document.getElementById('timer-display').classList.remove('finished');
+
+  updateTimerDisplay();
+  renderInfusionList();
+  showToast('已选择第' + (index + 1) + '泡');
 }
 
 // Override toggleTimer to handle "next infusion" state
