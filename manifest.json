@@ -2,19 +2,19 @@
   "name": "泡饮百科",
   "short_name": "泡饮百科",
   "description": "六大茶类、花草茶、中药材、养生茶饮百科，智能搭配推荐",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#FAF7F0",
   "theme_color": "#7B9E6B",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
