@@ -1359,6 +1359,261 @@ body,
 .quotes-carousel,
 .famous-tea-detail,
 .history-card,
-.fun-fact-card {
+.fun-fact-card,
+.effect-tag,
+.body-type-card,
+.contraindication-item,
+.pairing-card,
+.favorite-btn {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ========== Effect Tags (Pairing Query) ========== */
+.effect-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.effect-tag {
+  padding: 8px 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.effect-tag:hover,
+.effect-tag.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* ========== Body Type Cards ========== */
+.body-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.body-type-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.body-type-card:hover,
+.body-type-card.selected {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary);
+}
+
+.body-type-card .type-emoji {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.body-type-card .type-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.body-type-card .type-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Contraindication List ========== */
+.contraindication-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.contraindication-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-card);
+  border-radius: var(--radius-btn);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contraindication-item:hover,
+.contraindication-item.selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.contraindication-item .item-icon {
+  font-size: 1.2rem;
+}
+
+.contraindication-item .item-label {
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.contraindication-item .item-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contraindication-item.selected .item-check {
+  background: #fff;
+  border-color: #fff;
+}
+
+.contraindication-item.selected .item-check::after {
+  content: "\2713";
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* ========== Pairing Card ========== */
+.pairing-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 12px;
+}
+
+.pairing-card .pairing-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pairing-card .pairing-emoji {
+  font-size: 1.5rem;
+}
+
+.pairing-card .pairing-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.pairing-card .pairing-effect {
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.pairing-card .pairing-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pairing-card .benefit-tag {
+  padding: 4px 10px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Favorite Button ========== */
+.favorite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-size: 0.95rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 16px;
+}
+
+.favorite-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.favorite-btn.favorited {
+  background: var(--color-warning);
+  color: #fff;
+  border-color: var(--color-warning);
+}
+
+.favorite-btn .favorite-icon {
+  font-size: 1.2rem;
+}
+
+/* ========== Empty State ========== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-secondary);
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+}
+
+/* ========== Pairing List in Detail ========== */
+.pairing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pairing-list .pairing-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-btn);
+}
+
+.pairing-list .pairing-item .pairing-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.pairing-list .pairing-item .pairing-effect {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  flex: 1;
 }

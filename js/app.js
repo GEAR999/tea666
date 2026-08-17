@@ -1,5 +1,5 @@
 // ==========================================
-// 泡茶知识助手 - 主应用逻辑
+// 泡饮百科 - 主应用逻辑
 // ==========================================
 
 // ---- State ----
@@ -16,6 +16,10 @@ let timerState = {
   currentInfusion: 0,
   infusionTimes: []
 };
+let currentBrewItem = null;
+let favorites = JSON.parse(localStorage.getItem('brew-favorites') || '[]');
+let selectedBodyType = null;
+let selectedContraindications = [];
 
 // ---- Daily Tips ----
 const DAILY_TIPS = [
@@ -42,6 +46,11 @@ document.addEventListener('DOMContentLoaded', function() {
   initTimerPage();
   initProfilePage();
   initQuotesCarousel();
+  initCategoryPages();
+  initPairingPage();
+  initBodyTypePage();
+  initContraindicationPage();
+  initFavoritesPage();
 });
 
 // ---- Theme Toggle (Dark Mode) ----
@@ -735,5 +744,499 @@ function initProfilePage() {
 }
 
 function showAbout() {
-  alert('泡茶知识助手 v1.0\n\n一款专注于中国茶文化的知识应用。\n涵盖六大茶类百科、智能推荐、\n冲泡计时器等功能。\n\n愿每一杯茶，都泡得恰到好处。');
+  alert('泡饮百科 v2.0\n\n一款专注于泡饮文化的知识应用。\n涵盖六大茶类、花草茶、中药材、\n养生茶饮、果茶类百科，\n智能搭配推荐、体质查询等功能。\n\n愿每一杯茶，都泡得恰到好处。');
+}
+
+// ---- CATEGORY PAGES ----
+function initCategoryPages() {
+  renderCategoryGrid('flower', BREW_DATA.flowerTeas);
+  renderCategoryGrid('herb', BREW_DATA.herbs);
+  renderCategoryGrid('wellness', BREW_DATA.wellnessTeas);
+  renderCategoryGrid('fruit', BREW_DATA.fruitTeas);
+}
+
+function renderCategoryGrid(category, items) {
+  var grid = document.getElementById(category + '-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  items.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'tea-card';
+    card.innerHTML =
+      '<div class="tea-emoji">' + item.emoji + '</div>' +
+      '<div class="tea-info">' +
+        '<div class="tea-name">' + item.name + '</div>' +
+        '<div class="tea-desc">' + item.nature + '</div>' +
+      '</div>';
+    card.onclick = function() { openBrewDetail(item); };
+    grid.appendChild(card);
+  });
+}
+
+function filterBrewItems(category) {
+  var searchInput = document.getElementById(category + '-search');
+  var keyword = searchInput.value.toLowerCase().trim();
+  var grid = document.getElementById(category + '-grid');
+  
+  var itemsMap = {
+    flower: BREW_DATA.flowerTeas,
+    herb: BREW_DATA.herbs,
+    wellness: BREW_DATA.wellnessTeas,
+    fruit: BREW_DATA.fruitTeas
+  };
+  
+  var items = itemsMap[category] || [];
+  var filtered = items.filter(function(item) {
+    return item.name.toLowerCase().includes(keyword) ||
+           item.description.toLowerCase().includes(keyword) ||
+           item.benefits.some(function(b) { return b.toLowerCase().includes(keyword); });
+  });
+  
+  grid.innerHTML = '';
+  filtered.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'tea-card';
+    card.innerHTML =
+      '<div class="tea-emoji">' + item.emoji + '</div>' +
+      '<div class="tea-info">' +
+        '<div class="tea-name">' + item.name + '</div>' +
+        '<div class="tea-desc">' + item.nature + '</div>' +
+      '</div>';
+    card.onclick = function() { openBrewDetail(item); };
+    grid.appendChild(card);
+  });
+}
+
+function switchToCategory(category) {
+  switchTab(category);
+}
+
+// ---- BREW DETAIL ----
+function openBrewDetail(item) {
+  currentBrewItem = item;
+  document.getElementById('brew-detail-title').textContent = item.name;
+  document.getElementById('brew-detail-emoji').textContent = item.emoji;
+  document.getElementById('brew-detail-name').textContent = item.name;
+  document.getElementById('brew-detail-nature').textContent = item.nature;
+  document.getElementById('brew-detail-desc').textContent = item.description;
+  document.getElementById('brew-detail-meridians').textContent = item.nature + '，' + item.meridians;
+  
+  // Brewing info
+  var brewingDiv = document.getElementById('brew-detail-brewing');
+  brewingDiv.innerHTML =
+    '<div class="info-item"><span class="info-label">水温</span><span class="info-value">' + item.brewing.waterTemp + '</span></div>' +
+    '<div class="info-item"><span class="info-label">用量</span><span class="info-value">' + item.brewing.amount + '</span></div>' +
+    '<div class="info-item"><span class="info-label">时间</span><span class="info-value">' + item.brewing.time + '</span></div>' +
+    '<div class="info-item"><span class="info-label">冲泡次数</span><span class="info-value">' + item.brewing.infusions + '</span></div>';
+  
+  // Benefits
+  var benefitsDiv = document.getElementById('brew-detail-benefits');
+  benefitsDiv.innerHTML = '';
+  item.benefits.forEach(function(b) {
+    benefitsDiv.innerHTML += '<span class="tag">' + b + '</span>';
+  });
+  
+  // Suitable people
+  var suitableDiv = document.getElementById('brew-detail-suitable');
+  suitableDiv.innerHTML = '';
+  item.suitablePeople.forEach(function(s) {
+    suitableDiv.innerHTML += '<span class="tag">' + s + '</span>';
+  });
+  
+  // Taboos
+  var taboosDiv = document.getElementById('brew-detail-taboos');
+  taboosDiv.innerHTML =
+    '<div class="taboo-item"><span class="taboo-icon">&#x26D4;</span><span>不适宜人群：' + item.taboos.unsuitable.join('、') + '</span></div>' +
+    '<div class="taboo-item"><span class="taboo-icon">&#x26A0;</span><span>注意事项：' + item.taboos.precautions + '</span></div>' +
+    '<div class="taboo-item"><span class="taboo-icon">&#x1F48A;</span><span>药物相互作用：' + item.taboos.drugInteractions + '</span></div>';
+  
+  // Pairings
+  var pairingsDiv = document.getElementById('brew-detail-pairings');
+  pairingsDiv.innerHTML = '';
+  if (item.pairings && item.pairings.length > 0) {
+    item.pairings.forEach(function(p) {
+      pairingsDiv.innerHTML +=
+        '<div class="pairing-item">' +
+          '<span class="pairing-name">' + p.name + '</span>' +
+          '<span class="pairing-effect">' + p.effect + '</span>' +
+        '</div>';
+    });
+  } else {
+    pairingsDiv.innerHTML = '<p style="color:var(--color-text-secondary);font-size:0.85rem;">暂无搭配推荐</p>';
+  }
+  
+  // Update favorite button
+  updateFavoriteButton();
+  
+  document.getElementById('brew-detail').classList.add('active');
+}
+
+function closeBrewDetail() {
+  document.getElementById('brew-detail').classList.remove('active');
+  currentBrewItem = null;
+}
+
+// ---- FAVORITES ----
+function toggleFavorite() {
+  if (!currentBrewItem) return;
+  
+  var itemId = currentBrewItem.id;
+  var index = favorites.indexOf(itemId);
+  
+  if (index > -1) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(itemId);
+  }
+  
+  localStorage.setItem('brew-favorites', JSON.stringify(favorites));
+  updateFavoriteButton();
+  renderFavoritesGrid();
+}
+
+function updateFavoriteButton() {
+  if (!currentBrewItem) return;
+  
+  var btn = document.getElementById('brew-favorite-btn');
+  var icon = document.getElementById('favorite-icon');
+  var text = document.getElementById('favorite-text');
+  
+  var isFavorited = favorites.indexOf(currentBrewItem.id) > -1;
+  
+  if (isFavorited) {
+    btn.classList.add('favorited');
+    icon.innerHTML = '&#x2605;';
+    text.textContent = '已收藏';
+  } else {
+    btn.classList.remove('favorited');
+    icon.innerHTML = '&#x2606;';
+    text.textContent = '收藏';
+  }
+}
+
+function initFavoritesPage() {
+  renderFavoritesGrid();
+}
+
+function renderFavoritesGrid() {
+  var grid = document.getElementById('favorites-grid');
+  var emptyState = document.getElementById('favorites-empty');
+  
+  if (!grid) return;
+  
+  if (favorites.length === 0) {
+    grid.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+  
+  grid.style.display = 'grid';
+  emptyState.style.display = 'none';
+  grid.innerHTML = '';
+  
+  // Find all favorited items
+  var allItems = [].concat(
+    BREW_DATA.flowerTeas,
+    BREW_DATA.herbs,
+    BREW_DATA.wellnessTeas,
+    BREW_DATA.fruitTeas
+  );
+  
+  favorites.forEach(function(itemId) {
+    var item = allItems.find(function(i) { return i.id === itemId; });
+    if (!item) return;
+    
+    var card = document.createElement('div');
+    card.className = 'tea-card';
+    card.innerHTML =
+      '<div class="tea-emoji">' + item.emoji + '</div>' +
+      '<div class="tea-info">' +
+        '<div class="tea-name">' + item.name + '</div>' +
+        '<div class="tea-desc">' + item.nature + '</div>' +
+      '</div>';
+    card.onclick = function() { openBrewDetail(item); };
+    grid.appendChild(card);
+  });
+}
+
+// ---- PAIRING QUERY ----
+function initPairingPage() {
+  var tagsDiv = document.getElementById('effect-tags');
+  if (!tagsDiv) return;
+  
+  tagsDiv.innerHTML = '';
+  Object.keys(BREW_DATA.effects).forEach(function(effect) {
+    var tag = document.createElement('div');
+    tag.className = 'effect-tag';
+    tag.textContent = effect;
+    tag.onclick = function() {
+      document.getElementById('pairing-search').value = effect;
+      searchPairing();
+    };
+    tagsDiv.appendChild(tag);
+  });
+}
+
+function searchPairing() {
+  var keyword = document.getElementById('pairing-search').value.toLowerCase().trim();
+  var resultsDiv = document.getElementById('pairing-results');
+  
+  if (!keyword) {
+    resultsDiv.innerHTML = '';
+    return;
+  }
+  
+  // Find matching effects
+  var matchingEffects = Object.keys(BREW_DATA.effects).filter(function(effect) {
+    return effect.toLowerCase().includes(keyword);
+  });
+  
+  if (matchingEffects.length === 0) {
+    resultsDiv.innerHTML = '<div class="empty-state"><p>未找到相关搭配</p></div>';
+    return;
+  }
+  
+  // Get all items for these effects
+  var itemIds = [];
+  matchingEffects.forEach(function(effect) {
+    itemIds = itemIds.concat(BREW_DATA.effects[effect]);
+  });
+  
+  // Remove duplicates
+  itemIds = itemIds.filter(function(id, index) {
+    return itemIds.indexOf(id) === index;
+  });
+  
+  // Find items
+  var allItems = [].concat(
+    BREW_DATA.flowerTeas,
+    BREW_DATA.herbs,
+    BREW_DATA.wellnessTeas,
+    BREW_DATA.fruitTeas
+  );
+  
+  var items = allItems.filter(function(item) {
+    return itemIds.indexOf(item.id) > -1;
+  });
+  
+  resultsDiv.innerHTML = '';
+  items.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'pairing-card';
+    
+    var benefitsHtml = '';
+    item.benefits.slice(0, 4).forEach(function(b) {
+      benefitsHtml += '<span class="benefit-tag">' + b + '</span>';
+    });
+    
+    card.innerHTML =
+      '<div class="pairing-header">' +
+        '<span class="pairing-emoji">' + item.emoji + '</span>' +
+        '<span class="pairing-name">' + item.name + '</span>' +
+      '</div>' +
+      '<div class="pairing-effect">' + item.nature + '</div>' +
+      '<div class="pairing-benefits">' + benefitsHtml + '</div>';
+    
+    card.onclick = function() { openBrewDetail(item); };
+    resultsDiv.appendChild(card);
+  });
+}
+
+// ---- BODY TYPE QUERY ----
+function initBodyTypePage() {
+  var grid = document.getElementById('body-type-grid');
+  if (!grid) return;
+  
+  var bodyTypeEmojis = {
+    cold: '\u2744\uFE0F',
+    hot: '\uD83D\uDD25',
+    damp: '\uD83D\uDCA7',
+    qi_deficiency: '\uD83D\uDCA8',
+    blood_deficiency: '\uD83D\uDCA7'
+  };
+  
+  grid.innerHTML = '';
+  Object.keys(BREW_DATA.bodyTypes).forEach(function(key) {
+    var type = BREW_DATA.bodyTypes[key];
+    var card = document.createElement('div');
+    card.className = 'body-type-card';
+    card.innerHTML =
+      '<div class="type-emoji">' + bodyTypeEmojis[key] + '</div>' +
+      '<div class="type-name">' + type.label + '</div>' +
+      '<div class="type-desc">' + type.description + '</div>';
+    card.onclick = function() {
+      selectedBodyType = key;
+      document.querySelectorAll('.body-type-card').forEach(function(c) {
+        c.classList.remove('selected');
+      });
+      card.classList.add('selected');
+      renderBodyTypeResults();
+    };
+    grid.appendChild(card);
+  });
+}
+
+function renderBodyTypeResults() {
+  var resultsDiv = document.getElementById('body-type-results');
+  if (!selectedBodyType) {
+    resultsDiv.innerHTML = '';
+    return;
+  }
+  
+  var bodyType = BREW_DATA.bodyTypes[selectedBodyType];
+  
+  // Find suitable items
+  var allItems = [].concat(
+    BREW_DATA.flowerTeas,
+    BREW_DATA.herbs,
+    BREW_DATA.wellnessTeas,
+    BREW_DATA.fruitTeas
+  );
+  
+  var suitableItems = allItems.filter(function(item) {
+    return bodyType.suitable.indexOf(item.id) > -1;
+  });
+  
+  var avoidItems = allItems.filter(function(item) {
+    return bodyType.avoid.indexOf(item.id) > -1;
+  });
+  
+  var html = '<div class="section-title">推荐泡饮</div>';
+  suitableItems.forEach(function(item) {
+    html +=
+      '<div class="pairing-card" onclick="openBrewDetail(window.BREW_DATA_ALL[\'' + item.id + '\'])">' +
+        '<div class="pairing-header">' +
+          '<span class="pairing-emoji">' + item.emoji + '</span>' +
+          '<span class="pairing-name">' + item.name + '</span>' +
+        '</div>' +
+        '<div class="pairing-effect">' + item.nature + '</div>' +
+      '</div>';
+  });
+  
+  html += '<div class="section-title" style="margin-top:20px;">建议避免</div>';
+  avoidItems.forEach(function(item) {
+    html +=
+      '<div class="pairing-card" onclick="openBrewDetail(window.BREW_DATA_ALL[\'' + item.id + '\'])" style="opacity:0.7;">' +
+        '<div class="pairing-header">' +
+          '<span class="pairing-emoji">' + item.emoji + '</span>' +
+          '<span class="pairing-name">' + item.name + '</span>' +
+        '</div>' +
+        '<div class="pairing-effect">' + item.nature + '</div>' +
+      '</div>';
+  });
+  
+  resultsDiv.innerHTML = html;
+  
+  // Store all items for click handler
+  window.BREW_DATA_ALL = {};
+  allItems.forEach(function(item) {
+    window.BREW_DATA_ALL[item.id] = item;
+  });
+}
+
+// ---- CONTRAINDICATION ----
+function initContraindicationPage() {
+  var list = document.getElementById('contraindication-list');
+  if (!list) return;
+  
+  var contraindicationIcons = {
+    pregnancy: '\uD83E\uDD30',
+    menstruation: '\uD83D\uDC69',
+    taking_medication: '\uD83D\uDC8A',
+    cold_flu: '\uD83E\uDD27',
+    diabetes: '\uD83D\uDC89',
+    stomach_acid: '\uD83D\uDD25'
+  };
+  
+  list.innerHTML = '';
+  Object.keys(BREW_DATA.contraindications).forEach(function(key) {
+    var item = BREW_DATA.contraindications[key];
+    var div = document.createElement('div');
+    div.className = 'contraindication-item';
+    div.innerHTML =
+      '<span class="item-icon">' + contraindicationIcons[key] + '</span>' +
+      '<span class="item-label">' + item.label + '</span>' +
+      '<span class="item-check"></span>';
+    div.onclick = function() {
+      var index = selectedContraindications.indexOf(key);
+      if (index > -1) {
+        selectedContraindications.splice(index, 1);
+        div.classList.remove('selected');
+      } else {
+        selectedContraindications.push(key);
+        div.classList.add('selected');
+      }
+      renderContraindicationResults();
+    };
+    list.appendChild(div);
+  });
+}
+
+function renderContraindicationResults() {
+  var resultsDiv = document.getElementById('contraindication-results');
+  
+  if (selectedContraindications.length === 0) {
+    resultsDiv.innerHTML = '';
+    return;
+  }
+  
+  // Get all items to avoid
+  var avoidIds = [];
+  selectedContraindications.forEach(function(key) {
+    avoidIds = avoidIds.concat(BREW_DATA.contraindications[key].avoid);
+  });
+  
+  // Remove duplicates
+  avoidIds = avoidIds.filter(function(id, index) {
+    return avoidIds.indexOf(id) === index;
+  });
+  
+  // Find all items
+  var allItems = [].concat(
+    BREW_DATA.flowerTeas,
+    BREW_DATA.herbs,
+    BREW_DATA.wellnessTeas,
+    BREW_DATA.fruitTeas
+  );
+  
+  var avoidItems = allItems.filter(function(item) {
+    return avoidIds.indexOf(item.id) > -1;
+  });
+  
+  var safeItems = allItems.filter(function(item) {
+    return avoidIds.indexOf(item.id) === -1;
+  });
+  
+  var html = '<div class="section-title">建议避免</div>';
+  avoidItems.forEach(function(item) {
+    html +=
+      '<div class="pairing-card" onclick="openBrewDetail(window.BREW_DATA_ALL[\'' + item.id + '\'])" style="opacity:0.7;">' +
+        '<div class="pairing-header">' +
+          '<span class="pairing-emoji">' + item.emoji + '</span>' +
+          '<span class="pairing-name">' + item.name + '</span>' +
+        '</div>' +
+        '<div class="pairing-effect">' + item.nature + '</div>' +
+      '</div>';
+  });
+  
+  html += '<div class="section-title" style="margin-top:20px;">可以饮用</div>';
+  safeItems.forEach(function(item) {
+    html +=
+      '<div class="pairing-card" onclick="openBrewDetail(window.BREW_DATA_ALL[\'' + item.id + '\'])">' +
+        '<div class="pairing-header">' +
+          '<span class="pairing-emoji">' + item.emoji + '</span>' +
+          '<span class="pairing-name">' + item.name + '</span>' +
+        '</div>' +
+        '<div class="pairing-effect">' + item.nature + '</div>' +
+      '</div>';
+  });
+  
+  resultsDiv.innerHTML = html;
+  
+  // Store all items for click handler
+  window.BREW_DATA_ALL = {};
+  allItems.forEach(function(item) {
+    window.BREW_DATA_ALL[item.id] = item;
+  });
 }

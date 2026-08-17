@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="泡茶知识助手 - 六大茶类百科、智能推荐、冲泡计时器" />
+  <meta name="description" content="泡饮百科 - 花草茶、中药材、养生茶饮、果茶百科，智能搭配推荐" />
   <meta name="theme-color" content="#FAF7F0" />
-  <title>泡茶知识助手</title>
+  <title>泡饮百科</title>
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
@@ -19,7 +19,7 @@
     <!-- ========== HOME PAGE ========== -->
     <div id="page-home" class="page active">
       <div class="home-hero">
-        <div class="hero-title">泡茶知识助手</div>
+        <div class="hero-title">泡饮百科</div>
         <div class="hero-subtitle">一杯好茶，从了解开始</div>
       </div>
 
@@ -68,6 +68,46 @@
 
       <div class="section-title">六大茶类</div>
       <div class="home-tea-row" id="home-tea-row"></div>
+
+      <div class="section-title">更多分类</div>
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchToCategory('flower')">
+          <span class="qa-icon">&#x1F33C;</span>
+          <span class="qa-label">花草茶</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('herb')">
+          <span class="qa-icon">&#x1F33F;</span>
+          <span class="qa-label">中药材</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('wellness')">
+          <span class="qa-icon">&#x1F375;</span>
+          <span class="qa-label">养生茶</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('fruit')">
+          <span class="qa-icon">&#x1F34E;</span>
+          <span class="qa-label">果茶类</span>
+        </div>
+      </div>
+
+      <div class="section-title">实用工具</div>
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchTab('pairing')">
+          <span class="qa-icon">&#x1F517;</span>
+          <span class="qa-label">搭配查询</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('body-type')">
+          <span class="qa-icon">&#x1F9EC;</span>
+          <span class="qa-label">体质查询</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('contraindication')">
+          <span class="qa-icon">&#x26A0;</span>
+          <span class="qa-label">禁忌提醒</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('favorites')">
+          <span class="qa-icon">&#x2B50;</span>
+          <span class="qa-label">我的收藏</span>
+        </div>
+      </div>
 
       <div class="section-title">今日茶知识</div>
       <div class="card" id="daily-tip-card" style="cursor: default;">
@@ -170,9 +210,152 @@
       <div class="profile-section">
         <div class="profile-item" onclick="showAbout()">
           <span class="item-icon">&#x2139;</span>
-          <span class="item-text">关于泡茶知识助手</span>
+          <span class="item-text">关于泡饮百科</span>
           <span class="item-arrow">&#x203A;</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ========== CATEGORY PAGES ========== -->
+    <div id="page-flower" class="page">
+      <div class="page-header">
+        <h1>花草茶</h1>
+        <p>芬芳怡人，养生佳品</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="flower-search" placeholder="搜索花草茶..." oninput="filterBrewItems('flower')" />
+      </div>
+      <div class="tea-grid" id="flower-grid"></div>
+    </div>
+
+    <div id="page-herb" class="page">
+      <div class="page-header">
+        <h1>中药材</h1>
+        <p>药食同源，养生之道</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="herb-search" placeholder="搜索中药材..." oninput="filterBrewItems('herb')" />
+      </div>
+      <div class="tea-grid" id="herb-grid"></div>
+    </div>
+
+    <div id="page-wellness" class="page">
+      <div class="page-header">
+        <h1>养生茶饮</h1>
+        <p>科学搭配，健康养生</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="wellness-search" placeholder="搜索养生茶..." oninput="filterBrewItems('wellness')" />
+      </div>
+      <div class="tea-grid" id="wellness-grid"></div>
+    </div>
+
+    <div id="page-fruit" class="page">
+      <div class="page-header">
+        <h1>果茶类</h1>
+        <p>果香四溢，清新自然</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="fruit-search" placeholder="搜索果茶..." oninput="filterBrewItems('fruit')" />
+      </div>
+      <div class="tea-grid" id="fruit-grid"></div>
+    </div>
+
+    <!-- ========== PAIRING QUERY PAGE ========== -->
+    <div id="page-pairing" class="page">
+      <div class="page-header">
+        <h1>搭配查询</h1>
+        <p>输入功效，推荐最佳搭配</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="pairing-search" placeholder="输入功效，如：清肝明目、补气养血..." oninput="searchPairing()" />
+      </div>
+      <div class="effect-tags" id="effect-tags"></div>
+      <div id="pairing-results"></div>
+    </div>
+
+    <!-- ========== BODY TYPE QUERY PAGE ========== -->
+    <div id="page-body-type" class="page">
+      <div class="page-header">
+        <h1>体质查询</h1>
+        <p>选择体质，推荐适合的泡饮</p>
+      </div>
+      <div class="body-type-grid" id="body-type-grid"></div>
+      <div id="body-type-results"></div>
+    </div>
+
+    <!-- ========== CONTRAINDICATION PAGE ========== -->
+    <div id="page-contraindication" class="page">
+      <div class="page-header">
+        <h1>禁忌提醒</h1>
+        <p>选择身体状况，自动过滤不适合的材料</p>
+      </div>
+      <div class="contraindication-list" id="contraindication-list"></div>
+      <div id="contraindication-results"></div>
+    </div>
+
+    <!-- ========== FAVORITES PAGE ========== -->
+    <div id="page-favorites" class="page">
+      <div class="page-header">
+        <h1>我的收藏</h1>
+        <p>收藏喜欢的泡饮材料</p>
+      </div>
+      <div class="tea-grid" id="favorites-grid"></div>
+      <div id="favorites-empty" class="empty-state" style="display: none;">
+        <div class="empty-icon">&#x2B50;</div>
+        <p>暂无收藏，快去添加吧</p>
+      </div>
+    </div>
+
+    <!-- ========== BREW DETAIL OVERLAY ========== -->
+    <div class="detail-overlay" id="brew-detail">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="detail-back" onclick="closeBrewDetail()">&#x2190;</button>
+          <h2 id="brew-detail-title"></h2>
+        </div>
+        <div class="detail-hero">
+          <span class="hero-emoji" id="brew-detail-emoji"></span>
+          <div class="hero-name" id="brew-detail-name"></div>
+          <div class="hero-ferment" id="brew-detail-nature"></div>
+        </div>
+        <div class="detail-section">
+          <h3>简介</h3>
+          <p id="brew-detail-desc"></p>
+        </div>
+        <div class="detail-section">
+          <h3>性味归经</h3>
+          <p id="brew-detail-meridians"></p>
+        </div>
+        <div class="detail-section">
+          <h3>冲泡方法</h3>
+          <div class="info-grid" id="brew-detail-brewing"></div>
+        </div>
+        <div class="detail-section">
+          <h3>主要功效</h3>
+          <div class="tag-list" id="brew-detail-benefits"></div>
+        </div>
+        <div class="detail-section">
+          <h3>适合人群</h3>
+          <div class="tag-list" id="brew-detail-suitable"></div>
+        </div>
+        <div class="detail-section">
+          <h3>禁忌与注意</h3>
+          <div id="brew-detail-taboos"></div>
+        </div>
+        <div class="detail-section">
+          <h3>搭配推荐</h3>
+          <div class="pairing-list" id="brew-detail-pairings"></div>
+        </div>
+        <button class="favorite-btn" id="brew-favorite-btn" onclick="toggleFavorite()">
+          <span id="favorite-icon">&#x2606;</span>
+          <span id="favorite-text">收藏</span>
+        </button>
       </div>
     </div>
 
@@ -268,6 +451,7 @@
   </div>
 
   <script src="/data/tea-data.js"></script>
+  <script src="/data/brew-data.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>
