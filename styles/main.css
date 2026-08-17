@@ -1037,3 +1037,328 @@ body {
   margin-bottom: 12px;
   display: block;
 }
+
+/* ========== Theme Toggle Button ========== */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 150;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: block;
+}
+
+/* ========== Dark Mode ========== */
+[data-theme="dark"] {
+  --color-primary: #4a7c59;
+  --color-primary-light: #5a8e6a;
+  --color-primary-dark: #3a6c49;
+  --color-warm-white: #2a2a2a;
+  --color-bg: #1a1a1a;
+  --color-card: #2a2a2a;
+  --color-sandalwood: #a07820;
+  --color-old-tea: #8a6030;
+  --color-text: #F5F0E8;
+  --color-text-secondary: #a0a0a0;
+  --color-text-light: #707070;
+  --color-border: #3a3a3a;
+  --color-success: #5a8e4b;
+  --color-warning: #b4654b;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-shadow-hover: rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-nav: 0 -2px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] body {
+  background-color: #1a1a1a;
+}
+
+[data-theme="dark"] #app {
+  background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .page-header {
+  background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .detail-overlay {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .detail-header {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .home-season-card {
+  background: linear-gradient(135deg, rgba(74, 124, 89, 0.15), rgba(160, 120, 32, 0.1));
+}
+
+[data-theme="dark"] .season-detail {
+  background: #1a1a1a;
+}
+
+/* ========== Today's Recommendation ========== */
+.today-rec-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16px;
+}
+
+.today-rec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.today-rec-header .rec-icon {
+  font-size: 1.3rem;
+}
+
+.today-rec-header .rec-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.today-rec-header .rec-time {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background: var(--color-warm-white);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.today-rec-tea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--color-warm-white);
+  border-radius: var(--radius-btn);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.today-rec-tea:active {
+  transform: scale(0.98);
+}
+
+.today-rec-tea .tea-emoji {
+  font-size: 1.5rem;
+}
+
+.today-rec-tea .tea-info {
+  flex: 1;
+}
+
+.today-rec-tea .tea-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.today-rec-tea .tea-reason {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ========== Tea Quotes Carousel ========== */
+.quotes-carousel {
+  position: relative;
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 20px;
+  overflow: hidden;
+  min-height: 80px;
+}
+
+.quote-item {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--color-text);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+}
+
+.quote-item.active {
+  opacity: 1;
+}
+
+.quote-author {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  font-family: var(--font-sans);
+}
+
+/* ========== Tea Guide Section ========== */
+.tea-guide-section {
+  margin-top: 20px;
+}
+
+.tea-guide-section h3 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-left: 8px;
+  border-left: 3px solid var(--color-primary);
+}
+
+/* ========== Famous Tea Detail Card ========== */
+.famous-tea-detail {
+  background: var(--color-warm-white);
+  border-radius: var(--radius-btn);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.famous-tea-detail .tea-name-header {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+
+.famous-tea-detail .detail-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+}
+
+.famous-tea-detail .detail-label {
+  color: var(--color-text-secondary);
+  min-width: 48px;
+  flex-shrink: 0;
+}
+
+.famous-tea-detail .detail-value {
+  color: var(--color-text);
+}
+
+/* ========== History Section ========== */
+.history-card {
+  background: var(--color-warm-white);
+  border-radius: var(--radius-btn);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.history-card .history-title {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.history-card .history-content {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Fun Facts Section ========== */
+.fun-fact-card {
+  background: var(--color-warm-white);
+  border-radius: var(--radius-btn);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.fun-fact-card .fact-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.fun-fact-card .fact-text {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* ========== Transition for theme change ========== */
+body,
+#app,
+.page,
+.page-header,
+.bottom-nav,
+.card,
+.tea-card,
+.search-bar,
+.rec-tab,
+.rec-option,
+.timer-tea-btn,
+.timer-btn,
+.teaware-card,
+.profile-section,
+.profile-item,
+.detail-overlay,
+.detail-header,
+.theme-toggle,
+.today-rec-card,
+.quotes-carousel,
+.famous-tea-detail,
+.history-card,
+.fun-fact-card {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}

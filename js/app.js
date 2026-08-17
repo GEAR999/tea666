@@ -35,12 +35,29 @@ const DAILY_TIPS = [
 
 // ---- Initialization ----
 document.addEventListener('DOMContentLoaded', function() {
+  initTheme();
   initHomePage();
   initTeasPage();
   initRecommendPage();
   initTimerPage();
   initProfilePage();
+  initQuotesCarousel();
 });
+
+// ---- Theme Toggle (Dark Mode) ----
+function initTheme() {
+  var savedTheme = localStorage.getItem('tea-app-theme');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+}
+
+function toggleTheme() {
+  var currentTheme = document.documentElement.getAttribute('data-theme');
+  var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('tea-app-theme', newTheme);
+}
 
 // ---- Tab Navigation ----
 function switchTab(tab) {
@@ -95,6 +112,121 @@ function initHomePage() {
   // Daily tip
   var tipIndex = now.getDate() % DAILY_TIPS.length;
   document.getElementById('daily-tip').textContent = DAILY_TIPS[tipIndex];
+
+  // Today's recommendation
+  initTodayRecommendation(seasonKey, now);
+}
+
+// ---- Today's Recommendation ----
+function initTodayRecommendation(seasonKey, now) {
+  var hour = now.getHours();
+  var timeKey;
+  var timeLabel;
+  if (hour >= 6 && hour < 12) {
+    timeKey = 'morning';
+    timeLabel = '早晨';
+  } else if (hour >= 12 && hour < 18) {
+    timeKey = 'afternoon';
+    timeLabel = '下午';
+  } else {
+    timeKey = 'evening';
+    timeLabel = '晚上';
+  }
+
+  document.getElementById('rec-time-label').textContent = timeLabel;
+
+  var timeRec = TEA_DATA.recommendations.time[timeKey];
+  var seasonRec = TEA_DATA.seasons[seasonKey];
+
+  // Combine time and season recommendations
+  var recommendedTeaIds = [];
+  var reasons = {};
+
+  // Add time-based teas
+  timeRec.teas.forEach(function(teaId) {
+    if (recommendedTeaIds.indexOf(teaId) === -1) {
+      recommendedTeaIds.push(teaId);
+      reasons[teaId] = timeRec.advice;
+    }
+  });
+
+  // Add season-based tea if not already included
+  if (recommendedTeaIds.indexOf(seasonRec.tea) === -1) {
+    recommendedTeaIds.push(seasonRec.tea);
+    reasons[seasonRec.tea] = seasonRec.advice;
+  }
+
+  var contentDiv = document.getElementById('today-rec-content');
+  contentDiv.innerHTML = '';
+
+  recommendedTeaIds.forEach(function(teaId) {
+    var cat = TEA_DATA.categories.find(function(c) { return c.id === teaId; });
+    if (!cat) return;
+
+    var teaDiv = document.createElement('div');
+    teaDiv.className = 'today-rec-tea';
+    teaDiv.innerHTML =
+      '<span class="tea-emoji">' + cat.emoji + '</span>' +
+      '<div class="tea-info">' +
+        '<div class="tea-name">' + cat.name + '</div>' +
+        '<div class="tea-reason">' + reasons[teaId] + '</div>' +
+      '</div>';
+    teaDiv.onclick = function() { openTeaDetail(teaId); };
+    contentDiv.appendChild(teaDiv);
+  });
+}
+
+// ---- Quotes Carousel ----
+var quoteInterval = null;
+var currentQuoteIndex = 0;
+
+function initQuotesCarousel() {
+  var quotes = TEA_DATA.teaQuotes;
+  if (!quotes || quotes.length === 0) return;
+
+  // Initialize 3 quote slots
+  for (var i = 0; i < 3; i++) {
+    var quoteEl = document.getElementById('quote-' + i);
+    if (quoteEl) {
+      var quoteText = quotes[i % quotes.length];
+      var parts = quoteText.split('——');
+      var content = parts[0].trim();
+      var author = parts.length > 1 ? parts[1].trim() : '';
+      quoteEl.innerHTML = content + (author ? '<span class="quote-author">—— ' + author + '</span>' : '');
+    }
+  }
+
+  // Start carousel
+  startQuotesCarousel();
+}
+
+function startQuotesCarousel() {
+  var quotes = TEA_DATA.teaQuotes;
+  if (!quotes || quotes.length <= 3) return;
+
+  quoteInterval = setInterval(function() {
+    currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+
+    // Fade out current
+    var currentEl = document.querySelector('.quote-item.active');
+    if (currentEl) currentEl.classList.remove('active');
+
+    // Get next slot
+    var nextSlotIndex = currentQuoteIndex % 3;
+    var nextEl = document.getElementById('quote-' + nextSlotIndex);
+
+    // Update content
+    var quoteText = quotes[currentQuoteIndex];
+    var parts = quoteText.split('——');
+    var content = parts[0].trim();
+    var author = parts.length > 1 ? parts[1].trim() : '';
+    nextEl.innerHTML = content + (author ? '<span class="quote-author">—— ' + author + '</span>' : '');
+
+    // Fade in
+    setTimeout(function() {
+      nextEl.classList.add('active');
+    }, 50);
+  }, 5000);
 }
 
 // ---- TEAS PAGE ----
@@ -170,6 +302,65 @@ function openTeaDetail(teaId) {
     span.textContent = t;
     famousList.appendChild(span);
   });
+
+  // Tea Guide - Famous Tea Details
+  var teaGuideDiv = document.getElementById('detail-tea-guide');
+  teaGuideDiv.innerHTML = '';
+  cat.famousTeas.forEach(function(teaName) {
+    var details = TEA_DATA.famousTeaDetails[teaName];
+    if (!details) return;
+
+    var card = document.createElement('div');
+    card.className = 'famous-tea-detail';
+    card.innerHTML =
+      '<div class="tea-name-header">' + teaName + '</div>' +
+      '<div class="detail-row"><span class="detail-label">干茶:</span><span class="detail-value">' + details.dryLeaf + '</span></div>' +
+      '<div class="detail-row"><span class="detail-label">汤色:</span><span class="detail-value">' + details.teaSoup + '</span></div>' +
+      '<div class="detail-row"><span class="detail-label">叶底:</span><span class="detail-value">' + details.leafBottom + '</span></div>';
+    teaGuideDiv.appendChild(card);
+  });
+
+  // History Section
+  var historyDiv = document.getElementById('detail-history');
+  historyDiv.innerHTML = '';
+  var history = TEA_DATA.history[teaId];
+  if (history) {
+    var originCard = document.createElement('div');
+    originCard.className = 'history-card';
+    originCard.innerHTML =
+      '<div class="history-title">&#x1F4DC; 起源</div>' +
+      '<div class="history-content">' + history.origin + '</div>';
+    historyDiv.appendChild(originCard);
+
+    var evolutionCard = document.createElement('div');
+    evolutionCard.className = 'history-card';
+    evolutionCard.innerHTML =
+      '<div class="history-title">&#x23F3; 工艺演变</div>' +
+      '<div class="history-content">' + history.evolution + '</div>';
+    historyDiv.appendChild(evolutionCard);
+
+    var storyCard = document.createElement('div');
+    storyCard.className = 'history-card';
+    storyCard.innerHTML =
+      '<div class="history-title">&#x1F4D6; 文化典故</div>' +
+      '<div class="history-content">' + history.story + '</div>';
+    historyDiv.appendChild(storyCard);
+  }
+
+  // Fun Facts Section
+  var funFactsDiv = document.getElementById('detail-fun-facts');
+  funFactsDiv.innerHTML = '';
+  var funFacts = TEA_DATA.funFacts[teaId];
+  if (funFacts) {
+    funFacts.forEach(function(fact) {
+      var card = document.createElement('div');
+      card.className = 'fun-fact-card';
+      card.innerHTML =
+        '<span class="fact-icon">&#x1F4A1;</span>' +
+        '<span class="fact-text">' + fact + '</span>';
+      funFactsDiv.appendChild(card);
+    });
+  }
 
   // Teaware
   var teawareList = document.getElementById('detail-teaware');

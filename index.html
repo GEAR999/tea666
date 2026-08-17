@@ -9,12 +9,25 @@
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
 <body>
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+    <span class="icon-sun">&#x2600;</span>
+    <span class="icon-moon">&#x1F319;</span>
+  </button>
+
   <div id="app">
     <!-- ========== HOME PAGE ========== -->
     <div id="page-home" class="page active">
       <div class="home-hero">
         <div class="hero-title">泡茶知识助手</div>
         <div class="hero-subtitle">一杯好茶，从了解开始</div>
+      </div>
+
+      <!-- Tea Quotes Carousel -->
+      <div class="quotes-carousel" id="quotes-carousel">
+        <div class="quote-item active" id="quote-0"></div>
+        <div class="quote-item" id="quote-1"></div>
+        <div class="quote-item" id="quote-2"></div>
       </div>
 
       <div class="home-quick-actions">
@@ -34,6 +47,16 @@
           <span class="qa-icon">&#x1F376;</span>
           <span class="qa-label">茶具指南</span>
         </div>
+      </div>
+
+      <!-- Today's Recommendation -->
+      <div class="today-rec-card" id="today-rec-card">
+        <div class="today-rec-header">
+          <span class="rec-icon">&#x1F31F;</span>
+          <span class="rec-title">今日推荐</span>
+          <span class="rec-time" id="rec-time-label"></span>
+        </div>
+        <div id="today-rec-content"></div>
       </div>
 
       <div id="home-season-section">
@@ -177,6 +200,25 @@
           <h3>代表名茶</h3>
           <div class="famous-tea-list" id="detail-famous"></div>
         </div>
+
+        <!-- Tea Guide - Famous Tea Details -->
+        <div class="detail-section tea-guide-section">
+          <h3>名茶图鉴</h3>
+          <div id="detail-tea-guide"></div>
+        </div>
+
+        <!-- History Section -->
+        <div class="detail-section tea-guide-section">
+          <h3>茶史文化</h3>
+          <div id="detail-history"></div>
+        </div>
+
+        <!-- Fun Facts Section -->
+        <div class="detail-section tea-guide-section">
+          <h3>冷知识</h3>
+          <div id="detail-fun-facts"></div>
+        </div>
+
         <div class="detail-section">
           <h3>推荐茶具</h3>
           <div class="famous-tea-list" id="detail-teaware"></div>
