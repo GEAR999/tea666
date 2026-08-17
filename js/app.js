@@ -1496,11 +1496,15 @@ function renderSingleMaterialAnalysis(item, scoreDiv, contentDiv) {
   
   // Pairing suggestions
   if (item.pairings && item.pairings.length > 0) {
+    var pairingText = item.pairings.map(function(p) {
+      if (typeof p === 'string') return p;
+      return p.name + '（' + p.effect + '）';
+    }).join('、');
     html +=
       '<div class="analysis-section">' +
         '<div class="analysis-section-title"><span class="icon">✨</span> 推荐搭配</div>' +
         '<div class="analysis-section-content">' +
-          '<p>' + item.pairings.join('、') + '</p>' +
+          '<p>' + pairingText + '</p>' +
         '</div>' +
       '</div>';
   }
