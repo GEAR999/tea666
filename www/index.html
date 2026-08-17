@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="泡饮百科 - 花草茶、中药材、养生茶饮、果茶百科，智能搭配推荐" />
+  <meta name="theme-color" content="#7B9E6B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="泡饮百科" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <title>泡饮百科</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+    <span class="icon-sun">&#x2600;</span>
+    <span class="icon-moon">&#x1F319;</span>
+  </button>
+
+  <div id="app">
+    <!-- ========== HOME PAGE ========== -->
+    <div id="page-home" class="page active">
+      <div class="home-hero">
+        <div class="hero-title">泡饮百科</div>
+        <div class="hero-subtitle">一杯好茶，从了解开始</div>
+      </div>
+
+      <!-- Tea Quotes Carousel -->
+      <div class="quotes-carousel" id="quotes-carousel">
+        <div class="quote-item active" id="quote-0"></div>
+        <div class="quote-item" id="quote-1"></div>
+        <div class="quote-item" id="quote-2"></div>
+      </div>
+
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchTab('teas')">
+          <span class="qa-icon">&#x1F343;</span>
+          <span class="qa-label">茶类百科</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('recommend')">
+          <span class="qa-icon">&#x1F9ED;</span>
+          <span class="qa-label">智能推荐</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('timer')">
+          <span class="qa-icon">&#x23F1;</span>
+          <span class="qa-label">冲泡计时</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('profile')">
+          <span class="qa-icon">&#x1F376;</span>
+          <span class="qa-label">茶具指南</span>
+        </div>
+      </div>
+
+      <!-- Today's Recommendation -->
+      <div class="today-rec-card" id="today-rec-card">
+        <div class="today-rec-header">
+          <span class="rec-icon">&#x1F31F;</span>
+          <span class="rec-title">今日推荐</span>
+          <span class="rec-time" id="rec-time-label"></span>
+        </div>
+        <div id="today-rec-content"></div>
+      </div>
+
+      <div id="home-season-section">
+        <div class="home-season-card" id="season-card">
+          <h3><span id="season-emoji"></span><span id="season-title"></span></h3>
+          <p id="season-advice"></p>
+        </div>
+      </div>
+
+      <div class="section-title">六大茶类</div>
+      <div class="home-tea-row" id="home-tea-row"></div>
+
+      <div class="section-title">更多分类</div>
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchToCategory('flower')">
+          <span class="qa-icon">&#x1F33C;</span>
+          <span class="qa-label">花草茶</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('herb')">
+          <span class="qa-icon">&#x1F33F;</span>
+          <span class="qa-label">中药材</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('wellness')">
+          <span class="qa-icon">&#x1F375;</span>
+          <span class="qa-label">养生茶</span>
+        </div>
+        <div class="quick-action" onclick="switchToCategory('fruit')">
+          <span class="qa-icon">&#x1F34E;</span>
+          <span class="qa-label">果茶类</span>
+        </div>
+      </div>
+
+      <div class="section-title">实用工具</div>
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchTab('pairing')">
+          <span class="qa-icon">&#x1F517;</span>
+          <span class="qa-label">搭配查询</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('body-type')">
+          <span class="qa-icon">&#x1F9EC;</span>
+          <span class="qa-label">体质查询</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('contraindication')">
+          <span class="qa-icon">&#x26A0;</span>
+          <span class="qa-label">禁忌提醒</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('favorites')">
+          <span class="qa-icon">&#x2B50;</span>
+          <span class="qa-label">我的收藏</span>
+        </div>
+      </div>
+
+      <div class="section-title">今日茶知识</div>
+      <div class="card" id="daily-tip-card" style="cursor: default;">
+        <p id="daily-tip" style="font-size: 0.9rem; line-height: 1.7; color: var(--color-text-secondary);"></p>
+      </div>
+    </div>
+
+    <!-- ========== TEAS PAGE ========== -->
+    <div id="page-teas" class="page">
+      <div class="page-header">
+        <h1>茶类百科</h1>
+        <p>探索六大茶类的奥秘</p>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="tea-search" placeholder="搜索茶类、名茶..." oninput="debouncedFilterTeas()" />
+      </div>
+
+      <div class="tea-grid" id="tea-grid"></div>
+    </div>
+
+    <!-- ========== RECOMMEND PAGE ========== -->
+    <div id="page-recommend" class="page">
+      <div class="page-header">
+        <h1>智能推荐</h1>
+        <p>为你找到最合适的茶</p>
+      </div>
+
+      <div class="rec-tabs">
+        <div class="rec-tab active" data-rec-type="body" onclick="switchRecTab('body')">按体质</div>
+        <div class="rec-tab" data-rec-type="scene" onclick="switchRecTab('scene')">按场景</div>
+        <div class="rec-tab" data-rec-type="time" onclick="switchRecTab('time')">按时间</div>
+      </div>
+
+      <div id="rec-content"></div>
+
+      <div class="rec-result" id="rec-result">
+        <h3 id="rec-result-title">推荐结果</h3>
+        <div class="rec-advice" id="rec-advice-text"></div>
+        <div class="section-subtitle">推荐茶类</div>
+        <div class="rec-tea-chips" id="rec-tea-chips"></div>
+      </div>
+    </div>
+
+    <!-- ========== TIMER PAGE ========== -->
+    <div id="page-timer" class="page">
+      <div class="page-header">
+        <h1>冲泡计时器</h1>
+        <p>精准掌控每一泡</p>
+      </div>
+
+      <div class="timer-container">
+        <div class="timer-tea-select">
+          <label>选择茶类</label>
+          <div class="timer-tea-grid" id="timer-tea-grid"></div>
+        </div>
+
+        <div class="timer-custom-time">
+          <label>自定义时间（秒）</label>
+          <div class="custom-time-input">
+            <input type="number" id="custom-time-input" placeholder="输入秒数" min="1" max="600" />
+            <button class="timer-btn timer-btn-small" onclick="applyCustomTime()">应用</button>
+          </div>
+        </div>
+
+        <div class="timer-infusion-select" id="infusion-select-container" style="display:none;">
+          <label>选择泡次</label>
+          <select id="infusion-select" onchange="selectInfusion(this.value)">
+          </select>
+        </div>
+
+        <div class="timer-ring-wrapper">
+          <svg class="timer-ring-svg" viewBox="0 0 220 220">
+            <circle class="timer-ring-bg" cx="110" cy="110" r="100" />
+            <circle class="timer-ring-progress" id="timer-progress" cx="110" cy="110" r="100"
+              stroke-dasharray="628.32" stroke-dashoffset="0" />
+          </svg>
+          <div class="timer-display" id="timer-display">
+            <div class="timer-time" id="timer-time">00:00</div>
+            <div class="timer-label" id="timer-status">选择茶类开始</div>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-primary" id="timer-start-btn" onclick="toggleTimer()">开始</button>
+          <button class="timer-btn timer-btn-secondary" onclick="resetTimer()">重置</button>
+        </div>
+
+        <div class="timer-infusion-info" id="infusion-info" style="display:none;">
+          <h4>冲泡进度</h4>
+          <div class="infusion-list" id="infusion-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PROFILE PAGE (Teaware + About) ========== -->
+    <div id="page-profile" class="page">
+      <div class="page-header">
+        <h1>茶具与更多</h1>
+        <p>茶具指南与个人中心</p>
+      </div>
+
+      <div class="section-title">茶具指南</div>
+      <div id="teaware-list"></div>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <div class="section-title">季节饮茶</div>
+      <div id="season-list"></div>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <div class="section-title">知识百科</div>
+      <div class="profile-section">
+        <div class="profile-item" onclick="showTeaComparison()">
+          <span class="item-icon">&#x1F4CA;</span>
+          <span class="item-text">六大茶类对比总表</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showCompatibility()">
+          <span class="item-icon">&#x26A0;</span>
+          <span class="item-text">配伍禁忌须知</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showDisclaimer()">
+          <span class="item-icon">&#x1F4DC;</span>
+          <span class="item-text">免责声明</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showReferences()">
+          <span class="item-icon">&#x1F4DA;</span>
+          <span class="item-text">参考资料</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showAbout()">
+          <span class="item-icon">&#x2139;</span>
+          <span class="item-text">关于泡饮百科</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CATEGORY PAGES ========== -->
+    <div id="page-flower" class="page">
+      <div class="page-header">
+        <h1>花草茶</h1>
+        <p>芬芳怡人，养生佳品</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="flower-search" placeholder="搜索花草茶..." oninput="debouncedFilterBrewItems('flower')" />
+      </div>
+      <div class="tea-grid" id="flower-grid"></div>
+    </div>
+
+    <div id="page-herb" class="page">
+      <div class="page-header">
+        <h1>中药材</h1>
+        <p>药食同源，养生之道</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="herb-search" placeholder="搜索中药材..." oninput="debouncedFilterBrewItems('herb')" />
+      </div>
+      <div class="tea-grid" id="herb-grid"></div>
+    </div>
+
+    <div id="page-wellness" class="page">
+      <div class="page-header">
+        <h1>养生茶饮</h1>
+        <p>科学搭配，健康养生</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="wellness-search" placeholder="搜索养生茶..." oninput="debouncedFilterBrewItems('wellness')" />
+      </div>
+      <div class="tea-grid" id="wellness-grid"></div>
+    </div>
+
+    <div id="page-fruit" class="page">
+      <div class="page-header">
+        <h1>果茶类</h1>
+        <p>果香四溢，清新自然</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="fruit-search" placeholder="搜索果茶..." oninput="debouncedFilterBrewItems('fruit')" />
+      </div>
+      <div class="tea-grid" id="fruit-grid"></div>
+    </div>
+
+    <!-- ========== PAIRING QUERY PAGE ========== -->
+    <div id="page-pairing" class="page">
+      <div class="page-header">
+        <h1>搭配查询</h1>
+        <p>输入功效，推荐最佳搭配</p>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="pairing-search" placeholder="输入功效，如：清肝明目、补气养血..." oninput="debouncedSearchPairing()" />
+      </div>
+      <div class="effect-tags" id="effect-tags"></div>
+      <div id="pairing-results"></div>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <!-- 自定义搭配入口 -->
+      <div class="custom-pairing-entry" onclick="showPage('custom-pairing')">
+        <div class="custom-pairing-icon">&#x2697;</div>
+        <div class="custom-pairing-info">
+          <div class="custom-pairing-title">自定义搭配检测</div>
+          <div class="custom-pairing-desc">选择2-5种材料，智能分析搭配效果</div>
+        </div>
+        <div class="custom-pairing-arrow">&#x203A;</div>
+      </div>
+
+      <!-- 经典搭配方案 -->
+      <div class="section-title" style="margin-top: 24px;">经典搭配方案</div>
+      <div id="classic-recipes"></div>
+    </div>
+
+    <!-- ========== CUSTOM PAIRING PAGE ========== -->
+    <div id="page-custom-pairing" class="page">
+      <div class="page-header">
+        <h1>自定义搭配检测</h1>
+        <p>选择2-5种材料，智能分析搭配效果</p>
+      </div>
+
+      <!-- 已选材料 -->
+      <div class="selected-materials">
+        <div class="selected-title">已选材料 (<span id="selected-count">0</span>/5)</div>
+        <div class="selected-list" id="selected-materials-list">
+          <div class="selected-empty">点击下方材料添加</div>
+        </div>
+      </div>
+
+      <!-- 分类筛选 -->
+      <div class="category-filter" id="custom-pairing-filter">
+        <button class="filter-btn active" data-category="all" onclick="filterCustomPairing('all')">全部</button>
+        <button class="filter-btn" data-category="tea" onclick="filterCustomPairing('tea')">茶类</button>
+        <button class="filter-btn" data-category="flower" onclick="filterCustomPairing('flower')">花草茶</button>
+        <button class="filter-btn" data-category="herb" onclick="filterCustomPairing('herb')">中药材</button>
+        <button class="filter-btn" data-category="wellness" onclick="filterCustomPairing('wellness')">养生茶</button>
+        <button class="filter-btn" data-category="fruit" onclick="filterCustomPairing('fruit')">果茶</button>
+      </div>
+
+      <!-- 材料选择网格 -->
+      <div class="material-select-grid" id="material-select-grid"></div>
+
+      <!-- 搭配分析结果 -->
+      <div class="pairing-analysis" id="pairing-analysis" style="display: none;">
+        <div class="analysis-header">
+          <div class="analysis-title">搭配分析</div>
+          <div class="analysis-score" id="analysis-score"></div>
+        </div>
+        <div class="analysis-content" id="analysis-content"></div>
+        <div class="analysis-actions">
+          <button class="btn-secondary" onclick="savePairingRecipe()">保存方案</button>
+          <button class="btn-secondary" onclick="clearSelectedMaterials()">清空重选</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== BODY TYPE QUERY PAGE ========== -->
+    <div id="page-body-type" class="page">
+      <div class="page-header">
+        <h1>体质查询</h1>
+        <p>选择体质，推荐适合的泡饮</p>
+      </div>
+      <div class="body-type-grid" id="body-type-grid"></div>
+      <div id="body-type-results"></div>
+    </div>
+
+    <!-- ========== CONTRAINDICATION PAGE ========== -->
+    <div id="page-contraindication" class="page">
+      <div class="page-header">
+        <h1>禁忌提醒</h1>
+        <p>选择身体状况，自动过滤不适合的材料</p>
+      </div>
+      <div class="contraindication-list" id="contraindication-list"></div>
+      <div id="contraindication-results"></div>
+    </div>
+
+    <!-- ========== FAVORITES PAGE ========== -->
+    <div id="page-favorites" class="page">
+      <div class="page-header">
+        <h1>我的收藏</h1>
+        <p>收藏喜欢的泡饮材料</p>
+      </div>
+      <div class="tea-grid" id="favorites-grid"></div>
+      <div id="favorites-empty" class="empty-state" style="display: none;">
+        <div class="empty-icon">&#x2B50;</div>
+        <p>暂无收藏，快去添加吧</p>
+      </div>
+    </div>
+
+    <!-- ========== BREW DETAIL OVERLAY ========== -->
+    <div class="detail-overlay" id="brew-detail">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="detail-back" onclick="closeBrewDetail()">&#x2190;</button>
+          <h2 id="brew-detail-title"></h2>
+        </div>
+        <div class="detail-hero">
+          <span class="hero-emoji" id="brew-detail-emoji"></span>
+          <div class="hero-name" id="brew-detail-name"></div>
+          <div class="hero-ferment" id="brew-detail-nature"></div>
+        </div>
+        <div class="detail-section">
+          <h3>简介</h3>
+          <p id="brew-detail-desc"></p>
+        </div>
+        <div class="detail-section">
+          <h3>性味归经</h3>
+          <p id="brew-detail-meridians"></p>
+        </div>
+        <div class="detail-section">
+          <h3>冲泡方法</h3>
+          <div class="info-grid" id="brew-detail-brewing"></div>
+        </div>
+        <div class="detail-section">
+          <h3>主要功效</h3>
+          <div class="tag-list" id="brew-detail-benefits"></div>
+        </div>
+        <div class="detail-section">
+          <h3>适合人群</h3>
+          <div class="tag-list" id="brew-detail-suitable"></div>
+        </div>
+        <div class="detail-section">
+          <h3>禁忌与注意</h3>
+          <div id="brew-detail-taboos"></div>
+        </div>
+        <div class="detail-section">
+          <h3>搭配推荐</h3>
+          <div class="pairing-list" id="brew-detail-pairings"></div>
+        </div>
+        <button class="favorite-btn" id="brew-favorite-btn" onclick="toggleFavorite()">
+          <span id="favorite-icon">&#x2606;</span>
+          <span id="favorite-text">收藏</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== TEA DETAIL OVERLAY ========== -->
+    <div class="detail-overlay" id="tea-detail">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="detail-back" onclick="closeTeaDetail()">&#x2190;</button>
+          <h2 id="detail-title"></h2>
+        </div>
+        <div class="detail-hero">
+          <span class="hero-emoji" id="detail-emoji"></span>
+          <div class="hero-name" id="detail-name"></div>
+          <div class="hero-ferment" id="detail-ferment"></div>
+        </div>
+        <div class="detail-section">
+          <h3>简介</h3>
+          <p id="detail-desc"></p>
+        </div>
+        <div class="detail-section">
+          <h3>冲泡参数</h3>
+          <div class="info-grid" id="detail-brewing"></div>
+        </div>
+        <div class="detail-section">
+          <h3>代表名茶</h3>
+          <div class="famous-tea-list" id="detail-famous"></div>
+        </div>
+
+        <!-- Tea Guide - Famous Tea Details -->
+        <div class="detail-section tea-guide-section">
+          <h3>名茶图鉴</h3>
+          <div id="detail-tea-guide"></div>
+        </div>
+
+        <!-- History Section -->
+        <div class="detail-section tea-guide-section">
+          <h3>茶史文化</h3>
+          <div id="detail-history"></div>
+        </div>
+
+        <!-- Fun Facts Section -->
+        <div class="detail-section tea-guide-section">
+          <h3>冷知识</h3>
+          <div id="detail-fun-facts"></div>
+        </div>
+
+        <div class="detail-section">
+          <h3>推荐茶具</h3>
+          <div class="famous-tea-list" id="detail-teaware"></div>
+        </div>
+        <div class="detail-section">
+          <h3>保健功效</h3>
+          <ul class="benefit-list" id="detail-benefits"></ul>
+        </div>
+        <div class="detail-section">
+          <h3>适合体质</h3>
+          <div class="famous-tea-list" id="detail-suitable"></div>
+        </div>
+        <div class="detail-section">
+          <h3>饮用禁忌</h3>
+          <ul class="taboo-list" id="detail-taboos"></ul>
+        </div>
+        <div class="detail-section">
+          <h3>最佳季节</h3>
+          <p id="detail-season"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TEA COMPARISON MODAL ========== -->
+    <div class="detail-overlay" id="tea-comparison-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('tea-comparison-modal')">&#x2190;</button>
+          <h2>六大茶类对比总表</h2>
+        </div>
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>茶类</th>
+                <th>发酵度</th>
+                <th>茶性</th>
+                <th>汤色</th>
+                <th>滋味</th>
+                <th>代表名茶</th>
+                <th>适合体质</th>
+                <th>储存方法</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-table-body"></tbody>
+          </table>
+        </div>
+        <div class="source-note">数据来源：《中国茶经》（陈宗懋主编）、GB/T 30766-2014《茶叶分类》</div>
+      </div>
+    </div>
+
+    <!-- ========== COMPATIBILITY MODAL ========== -->
+    <div class="detail-overlay" id="compatibility-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('compatibility-modal')">&#x2190;</button>
+          <h2>配伍禁忌须知</h2>
+        </div>
+        <div class="compatibility-content">
+          <div class="section-title">中药七情配伍</div>
+          <div class="info-block">
+            <p>中药配伍理论源自《神农本草经》，将药物配伍关系分为七种：</p>
+            <ul class="benefit-list">
+              <li><strong>单行</strong>：单味药使用，如独参汤</li>
+              <li><strong>相须</strong>：性能相似药物合用，增强疗效</li>
+              <li><strong>相使</strong>：主药+辅药，提高疗效</li>
+              <li><strong>相畏</strong>：一种药物毒性被另一种减轻</li>
+              <li><strong>相杀</strong>：一种药物能消除另一种毒性</li>
+              <li><strong>相恶</strong>：两药合用，相互削弱</li>
+              <li><strong>相反</strong>：合用产生毒性或副作用</li>
+            </ul>
+          </div>
+
+          <div class="section-title">十八反歌诀</div>
+          <div class="info-block warning-block">
+            <p class="verse">本草明载十八反，半蒌贝蔹及攻乌，</p>
+            <p class="verse">藻戟遂芫俱战草，诸参辛芍叛藜芦。</p>
+            <div class="verse-detail">
+              <p><strong>乌头反：</strong>半夏、瓜蒌、贝母、白蔹、白及</p>
+              <p><strong>甘草反：</strong>海藻、大戟、甘遂、芫花</p>
+              <p><strong>藜芦反：</strong>人参、沙参、丹参、玄参、细辛、芍药</p>
+            </div>
+          </div>
+
+          <div class="section-title">十九畏歌诀</div>
+          <div class="info-block warning-block">
+            <p class="verse">硫黄原是火中精，朴硝一见便相争；</p>
+            <p class="verse">水银莫与砒霜见，狼毒最怕密陀僧；</p>
+            <p class="verse">巴豆性烈最为上，偏与牵牛不顺情；</p>
+            <p class="verse">丁香莫与郁金见，牙硝难合京三棱；</p>
+            <p class="verse">川乌草乌不顺犀，人参最怕五灵脂；</p>
+            <p class="verse">官桂善能调冷气，若逢石脂便相欺。</p>
+          </div>
+
+          <div class="section-title">茶性体质搭配原则</div>
+          <div class="info-block">
+            <table class="body-tea-table">
+              <thead>
+                <tr><th>体质</th><th>推荐茶类</th><th>禁忌茶类</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>平和质</td><td>各类皆可</td><td>无特殊禁忌</td></tr>
+                <tr><td>气虚质</td><td>红茶、熟普</td><td>浓绿茶、生普</td></tr>
+                <tr><td>阳虚质</td><td>红茶、黑茶</td><td>绿茶、白茶</td></tr>
+                <tr><td>阴虚质</td><td>绿茶、白茶</td><td>浓红茶、黑茶</td></tr>
+                <tr><td>痰湿质</td><td>乌龙茶、普洱</td><td>甜腻茶饮</td></tr>
+                <tr><td>湿热质</td><td>绿茶、白茶</td><td>红茶、黑茶</td></tr>
+                <tr><td>血瘀质</td><td>花茶、绿茶</td><td>浓茶</td></tr>
+                <tr><td>气郁质</td><td>花茶、乌龙</td><td>浓茶</td></tr>
+                <tr><td>特禀质</td><td>淡茶为主</td><td>浓茶、新茶</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="source-note">数据来源：《神农本草经》、《儒门事亲》（张从正）、《医经小学》（李梴）、《中国药典》2025版</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DISCLAIMER MODAL ========== -->
+    <div class="detail-overlay" id="disclaimer-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('disclaimer-modal')">&#x2190;</button>
+          <h2>免责声明</h2>
+        </div>
+        <div class="disclaimer-content">
+          <div class="disclaimer-item">
+            <h3>1. 信息性质说明</h3>
+            <p>本应用提供的所有内容（包括但不限于茶类知识、花草茶信息、中药材资料、养生茶饮配方、体质分析、搭配建议等）仅供学习参考和文化普及之用，不构成任何医疗建议、诊断或治疗方案。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>2. 医疗建议声明</h3>
+            <p>如有健康问题或疾病，请务必咨询专业医师或中医师。本应用中的中药材信息、养生茶饮配方、体质分析等内容不能替代专业医疗诊断和治疗。切勿依据本应用内容自行用药或延误就医。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>3. 个体差异提醒</h3>
+            <p>每个人的体质、健康状况、过敏源不同，对茶类、花草茶、中药材的反应可能存在差异。孕妇、哺乳期妇女、儿童、老年人、慢性病患者及正在服药者，在使用任何泡饮材料前，请咨询专业医师。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>4. 配伍禁忌说明</h3>
+            <p>本应用提供的配伍禁忌信息（包括十八反、十九畏等）源自传统中医典籍，仅供学习参考。实际用药配伍需由专业中医师根据个人情况辨证施治，请勿自行配药使用。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>5. 数据来源说明</h3>
+            <p>本应用内容参考了《中国茶经》《本草纲目》《中国药典》《神农本草经》等典籍及现代研究成果，但可能存在疏漏或更新不及时的情况。如有出入，以最新权威出版物为准。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>6. 使用风险自担</h3>
+            <p>用户依据本应用信息所做的任何决策和行为，风险由用户自行承担。本应用开发者不对因使用本应用内容而产生的任何直接或间接损失承担责任。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>7. 知识产权声明</h3>
+            <p>本应用中的原创内容版权归开发者所有。引用的典籍内容、研究数据等版权归原作者或出版机构所有。如有版权问题，请联系开发者处理。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== REFERENCES MODAL ========== -->
+    <div class="detail-overlay" id="references-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('references-modal')">&#x2190;</button>
+          <h2>参考资料</h2>
+        </div>
+        <div class="references-content">
+          <div class="section-title">茶学典籍</div>
+          <ul class="reference-list">
+            <li>《中国茶经》 - 陈宗懋主编，上海文化出版社</li>
+            <li>《茶经》 - 陆羽著（唐代）</li>
+            <li>GB/T 30766-2014《茶叶分类》 - 国家标准</li>
+            <li>《中国名茶志》 - 中国农业出版社</li>
+          </ul>
+
+          <div class="section-title">中医药典籍</div>
+          <ul class="reference-list">
+            <li>《本草纲目》 - 李时珍著（明代）</li>
+            <li>《神农本草经》 - 汉代典籍</li>
+            <li>《中国药典》2025年版 - 国家药典委员会</li>
+            <li>《儒门事亲》 - 张从正著（金代）</li>
+            <li>《医经小学》 - 李梴著（明代）</li>
+            <li>《食疗本草》 - 孟诜著（唐代）</li>
+          </ul>
+
+          <div class="section-title">现代研究</div>
+          <ul class="reference-list">
+            <li>GB/T 46939-2025《中医体质分类与判定》 - 国家标准</li>
+            <li>卫健委《药食同源目录》 - 2023年版</li>
+            <li>北京市中医药管理局养生指南</li>
+            <li>中国茶叶学会科普资料</li>
+            <li>人民日报健康客户端 - 茶饮养生专栏</li>
+          </ul>
+
+          <div class="source-note">本应用内容综合整理自以上权威来源，如有更新请以最新版本为准。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== BOTTOM NAVIGATION ========== -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
+        <span class="nav-icon">&#x1F3E0;</span>
+        <span class="nav-label">首页</span>
+      </button>
+      <button class="nav-item" data-tab="teas" onclick="switchTab('teas')">
+        <span class="nav-icon">&#x1F343;</span>
+        <span class="nav-label">茶类</span>
+      </button>
+      <button class="nav-item" data-tab="recommend" onclick="switchTab('recommend')">
+        <span class="nav-icon">&#x1F9ED;</span>
+        <span class="nav-label">推荐</span>
+      </button>
+      <button class="nav-item" data-tab="timer" onclick="switchTab('timer')">
+        <span class="nav-icon">&#x23F1;</span>
+        <span class="nav-label">计时器</span>
+      </button>
+      <button class="nav-item" data-tab="profile" onclick="switchTab('profile')">
+        <span class="nav-icon">&#x1F464;</span>
+        <span class="nav-label">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="/data/tea-data.js"></script>
+  <script src="/data/brew-data.js"></script>
+  <script src="/data/compatibility-data.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/app.js"></script>
+
+  <!-- Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('Service Worker 注册成功:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('Service Worker 注册失败:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
