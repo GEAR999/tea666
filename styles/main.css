@@ -1992,3 +1992,210 @@ body,
 .dark-mode .analysis-warning .warning-content {
   color: #ef5350;
 }
+
+/* ========== Comparison Table ========== */
+.comparison-table-wrapper {
+  overflow-x: auto;
+  margin: 16px 0;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+}
+
+.comparison-table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.comparison-table th {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.comparison-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table tr:nth-child(even) {
+  background: var(--color-bg);
+}
+
+.comparison-table tr:hover {
+  background: rgba(123, 158, 107, 0.1);
+}
+
+/* ========== Compatibility Content ========== */
+.compatibility-content {
+  padding: 16px 0;
+}
+
+.compatibility-content .info-block {
+  background: var(--color-bg);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.compatibility-content .warning-block {
+  background: rgba(196, 117, 91, 0.1);
+  border: 1px solid rgba(196, 117, 91, 0.3);
+}
+
+.compatibility-content .verse {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1rem;
+  color: var(--color-text);
+  text-align: center;
+  margin: 8px 0;
+  line-height: 1.8;
+}
+
+.compatibility-content .verse-detail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.compatibility-content .verse-detail p {
+  font-size: 0.9rem;
+  margin: 8px 0;
+  color: var(--color-text-secondary);
+}
+
+.body-tea-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 12px;
+}
+
+.body-tea-table th {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+}
+
+.body-tea-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.body-tea-table tr:nth-child(even) {
+  background: var(--color-card);
+}
+
+/* ========== Disclaimer Content ========== */
+.disclaimer-content {
+  padding: 16px 0;
+}
+
+.disclaimer-item {
+  background: var(--color-bg);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.disclaimer-item h3 {
+  font-size: 1rem;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.disclaimer-item p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ========== References Content ========== */
+.references-content {
+  padding: 16px 0;
+}
+
+.reference-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.reference-list li {
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-btn);
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  border-left: 3px solid var(--color-primary);
+}
+
+/* ========== Source Note ========== */
+.source-note {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border);
+  font-style: italic;
+}
+
+/* ========== Detail Source ========== */
+.detail-source {
+  background: var(--color-bg);
+  border-radius: var(--radius-btn);
+  padding: 12px 16px;
+  margin-top: 16px;
+}
+
+.detail-source h4 {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.detail-source p {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== Dark Mode: New Components ========== */
+.dark-mode .comparison-table th {
+  background: var(--color-primary);
+}
+
+.dark-mode .comparison-table tr:nth-child(even) {
+  background: var(--color-card);
+}
+
+.dark-mode .compatibility-content .info-block {
+  background: var(--color-card);
+}
+
+.dark-mode .compatibility-content .warning-block {
+  background: rgba(196, 117, 91, 0.2);
+}
+
+.dark-mode .disclaimer-item {
+  background: var(--color-card);
+}
+
+.dark-mode .reference-list li {
+  background: var(--color-card);
+}

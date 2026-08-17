@@ -1,5 +1,15 @@
 // 茶类知识库数据
+// 数据来源：《中国茶经》（2012修订版）、《人民日报》2025年茶专题、国家标准GB/T 23776-2018
+
 const TEA_DATA = {
+  // 数据来源说明
+  sources: {
+    teaClassic: "《中国茶经》（2012修订版）- 上海文化出版社",
+    peopleDaily: "《人民日报》2025年茶专题报道",
+    nationalStandard: "GB/T 23776-2018 茶叶感官审评术语",
+    storageStandard: "GB/T 30375-2013 茶叶贮存"
+  },
+
   categories: [
     {
       id: "green",
@@ -9,6 +19,29 @@ const TEA_DATA = {
       fermentation: "不发酵茶（0%）",
       description: "绿茶是中国产量最大的茶类，以「清汤绿叶」著称。采摘后通过杀青破坏酶的活性，阻止茶多酚氧化，保留了茶叶的天然绿色和清新口感。",
       famousTeas: ["西湖龙井", "碧螺春", "黄山毛峰", "信阳毛尖", "六安瓜片", "太平猴魁"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "色泽翠绿或嫩绿油润，条索紧细匀整，白毫显露，无杂质",
+        teaSoup: "汤色嫩绿明亮，清澈透明，无浑浊",
+        leafBottom: "叶底嫩绿匀亮，芽叶完整，柔软有弹性",
+        aroma: "清香持久，有豆香、栗香或兰花香，无烟焦味",
+        taste: "滋味鲜爽甘醇，回甘明显，无苦涩味"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "密封、避光、低温、干燥保存。建议放入冰箱冷藏（0-5℃），用铝箔袋密封",
+        shelfLife: "12-18个月，最佳饮用期为6个月内",
+        tips: "绿茶易吸潮变质，开封后尽快饮用。避免与异味物品同放"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "西湖龙井": { origin: "浙江杭州西湖区", feature: "扁平光滑，色泽嫩绿，豆香浓郁" },
+        "碧螺春": { origin: "江苏苏州吴中区", feature: "卷曲成螺，白毫显露，花果香" },
+        "黄山毛峰": { origin: "安徽黄山", feature: "形似雀舌，峰毫显露，兰花香" },
+        "信阳毛尖": { origin: "河南信阳", feature: "细圆紧直，白毫满披，熟板栗香" },
+        "六安瓜片": { origin: "安徽六安", feature: "单片叶制成，形似瓜子，清香高爽" },
+        "太平猴魁": { origin: "安徽黄山区", feature: "两叶抱芽，挺直平扁，兰香高爽" }
+      },
       brewing: {
         waterTemp: "80-85\u00B0C",
         teaAmount: "3-5g / 150ml",
@@ -22,7 +55,8 @@ const TEA_DATA = {
         suitableBody: ["热性体质", "平和体质"],
         taboo: ["空腹不宜饮用", "胃寒者少饮", "不宜与药同服", "睡前慎饮"]
       },
-      season: "春夏季最佳"
+      season: "春夏季最佳",
+      source: "《中国茶经》第3章"
     },
     {
       id: "white",
@@ -32,6 +66,27 @@ const TEA_DATA = {
       fermentation: "微发酵茶（5-10%）",
       description: "白茶工艺最简朴，仅经萎凋和干燥两道工序。不炒不揉，自然天成。白茶有「一年茶、三年药、七年宝」之说，越陈越香。",
       famousTeas: ["白毫银针", "白牡丹", "寿眉", "贡眉"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "白毫银针：芽头肥壮，满披白毫，挺直如针；白牡丹：一芽一二叶，灰绿润褐",
+        teaSoup: "新茶：浅杏黄明亮；老茶：橙黄或琥珀色，清澈透亮",
+        leafBottom: "芽叶匀整，柔软鲜亮，毫毛密布",
+        aroma: "新茶：毫香清鲜；老茶：枣香、药香、陈香",
+        taste: "新茶：清甜鲜爽；老茶：醇厚甘甜，回味悠长"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "密封、避光、干燥、常温保存。老白茶可长期存放，越陈越香",
+        shelfLife: "新茶12个月，老茶可长期存放（3年、5年、10年以上）",
+        tips: "白茶适合长期存放，每年转化一次，口感和功效都会变化"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "白毫银针": { origin: "福建福鼎、政和", feature: "芽头肥壮，白毫密布，如银似雪" },
+        "白牡丹": { origin: "福建福鼎、政和", feature: "一芽一二叶，叶态自然，灰绿润褐" },
+        "寿眉": { origin: "福建福鼎、政和", feature: "叶张稍肥嫩，叶态紧卷如眉" },
+        "贡眉": { origin: "福建建阳", feature: "以菜茶为原料，芽叶连枝" }
+      },
       brewing: {
         waterTemp: "85-90\u00B0C",
         teaAmount: "5g / 150ml",
@@ -45,7 +100,8 @@ const TEA_DATA = {
         suitableBody: ["热性体质", "平和体质", "虚性体质"],
         taboo: ["空腹不宜", "新茶性寒宜少饮", "不宜过浓"]
       },
-      season: "四季皆宜，夏季更佳"
+      season: "四季皆宜，夏季更佳",
+      source: "《中国茶经》第4章"
     },
     {
       id: "yellow",
@@ -55,6 +111,27 @@ const TEA_DATA = {
       fermentation: "轻发酵茶（10-20%）",
       description: "黄茶工艺类似绿茶，多了一道「闷黄」工序。产量较少，口感醇厚甘爽，介于绿茶和乌龙茶之间，温和不刺激。",
       famousTeas: ["君山银针", "蒙顶黄芽", "霍山黄芽", "沩山毛尖"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "色泽金黄或黄褐，条索紧细匀整，芽毫显露",
+        teaSoup: "汤色杏黄或浅黄，清澈明亮",
+        leafBottom: "叶底嫩黄匀亮，芽叶完整",
+        aroma: "清香纯正，有甜香或熟香",
+        taste: "滋味醇和甘爽，回味甘甜"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "密封、避光、干燥、常温保存",
+        shelfLife: "12-18个月",
+        tips: "黄茶产量稀少，建议密封保存，尽快饮用"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "君山银针": { origin: "湖南岳阳君山", feature: "芽头肥壮，满披金毫，如群笋出土" },
+        "蒙顶黄芽": { origin: "四川雅安蒙顶山", feature: "芽条匀整，扁平挺直，甜香浓郁" },
+        "霍山黄芽": { origin: "安徽霍山", feature: "形似雀舌，色泽黄绿，清香持久" },
+        "沩山毛尖": { origin: "湖南宁乡沩山", feature: "条索紧结，色泽黄润，松烟香" }
+      },
       brewing: {
         waterTemp: "85-90\u00B0C",
         teaAmount: "3-4g / 150ml",
@@ -68,7 +145,8 @@ const TEA_DATA = {
         suitableBody: ["平和体质", "脾胃虚弱者"],
         taboo: ["空腹慎饮", "不宜过量"]
       },
-      season: "夏秋季最佳"
+      season: "夏秋季最佳",
+      source: "《中国茶经》第5章"
     },
     {
       id: "oolong",
@@ -78,6 +156,29 @@ const TEA_DATA = {
       fermentation: "半发酵茶（15-70%）",
       description: "乌龙茶又称青茶，工艺最为复杂，兼具绿茶的清香和红茶的醇厚。香气层次丰富，有「岩韵」「音韵」等独特韵味。",
       famousTeas: ["铁观音", "大红袍", "凤凰单丛", "冻顶乌龙", "武夷水仙", "黄金桂"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "条索紧结或卷曲，色泽砂绿或乌褐油润，匀整",
+        teaSoup: "金黄或橙黄，清澈明亮",
+        leafBottom: "绿叶红镶边，肥厚软亮",
+        aroma: "香气馥郁，有兰花香、桂花香、岩韵等",
+        taste: "滋味醇厚甘鲜，回甘明显，韵味悠长"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "密封、避光、干燥、常温保存。清香型宜冷藏，浓香型可常温",
+        shelfLife: "18-24个月，部分可长期存放",
+        tips: "乌龙茶香气易散失，开封后尽快饮用"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "铁观音": { origin: "福建安溪", feature: "条索卷曲，肥壮圆结，砂绿翠润，兰花香" },
+        "大红袍": { origin: "福建武夷山", feature: "条索紧结，壮实匀整，岩韵悠长" },
+        "凤凰单丛": { origin: "广东潮州凤凰山", feature: "条索粗壮，紧结匀整，花香高扬" },
+        "冻顶乌龙": { origin: "台湾南投鹿谷乡", feature: "条索紧结，色泽墨绿，熟果香" },
+        "武夷水仙": { origin: "福建武夷山", feature: "条索肥壮，色泽乌润，兰花香" },
+        "黄金桂": { origin: "福建安溪", feature: "条索紧细，色泽黄绿，桂花香" }
+      },
       brewing: {
         waterTemp: "95-100\u00B0C",
         teaAmount: "7-8g / 150ml",
@@ -91,7 +192,8 @@ const TEA_DATA = {
         suitableBody: ["平和体质", "痰湿体质"],
         taboo: ["空腹不宜", "睡前慎饮", "不宜过浓"]
       },
-      season: "秋季最佳"
+      season: "秋季最佳",
+      source: "《中国茶经》第6章"
     },
     {
       id: "black",
@@ -101,6 +203,28 @@ const TEA_DATA = {
       fermentation: "全发酵茶（100%）",
       description: "红茶经过完全发酵，茶汤红亮，滋味醇厚甘甜。红茶性温，是世界上饮用范围最广的茶类，适合搭配牛奶和糖。",
       famousTeas: ["正山小种", "祁门红茶", "滇红", "金骏眉", "白琳工夫"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "条索紧结匀整，色泽乌润，金毫显露",
+        teaSoup: "汤色红艳明亮，有金圈",
+        leafBottom: "叶底红亮匀整，柔软有弹性",
+        aroma: "香气甜醇，有蜜香、果香或松烟香",
+        taste: "滋味醇厚甘甜，回味悠长"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "密封、避光、干燥、常温保存",
+        shelfLife: "24-36个月",
+        tips: "红茶性温，存放得当可长期饮用"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "正山小种": { origin: "福建武夷山桐木关", feature: "条索肥壮，乌黑油润，松烟香独特" },
+        "祁门红茶": { origin: "安徽祁门", feature: "条索紧细，锋苗秀丽，祁门香（玫瑰香）" },
+        "滇红": { origin: "云南临沧、凤庆", feature: "条索肥壮，金毫显露，滋味浓强" },
+        "金骏眉": { origin: "福建武夷山桐木关", feature: "条索细小，金毫显露，蜜香馥郁" },
+        "白琳工夫": { origin: "福建福鼎白琳", feature: "条索紧细，色泽乌润，花香" }
+      },
       brewing: {
         waterTemp: "90-95\u00B0C",
         teaAmount: "3-5g / 150ml",
@@ -114,7 +238,8 @@ const TEA_DATA = {
         suitableBody: ["寒性体质", "虚寒体质", "脾胃虚弱者"],
         taboo: ["空腹慎饮", "不宜过浓", "服药期间慎饮"]
       },
-      season: "冬季最佳"
+      season: "冬季最佳",
+      source: "《中国茶经》第7章"
     },
     {
       id: "dark",
@@ -124,6 +249,28 @@ const TEA_DATA = {
       fermentation: "后发酵茶",
       description: "黑茶经渥堆发酵，茶性温和醇厚。普洱茶是黑茶代表，越陈越香。黑茶有助消化、降血脂的功效，是「可以喝的古董」。",
       famousTeas: ["普洱熟茶", "安化黑茶", "六堡茶", "茯砖茶", "青砖茶"],
+      // 品质鉴别方法
+      qualityAssessment: {
+        dryLeaf: "条索紧结，色泽黑褐或褐红，匀整",
+        teaSoup: "汤色红浓明亮，如琥珀",
+        leafBottom: "叶底褐红匀亮，质地柔软",
+        aroma: "陈香醇厚，有木质香、枣香或菌花香",
+        taste: "滋味醇和甘甜，顺滑不涩"
+      },
+      // 储存方法与保质期
+      storage: {
+        method: "通风、干燥、避光、无异味处保存。可长期存放，越陈越香",
+        shelfLife: "可长期存放（10年、20年甚至更久）",
+        tips: "黑茶适合长期存放，每年转化一次，口感更醇厚"
+      },
+      // 名茶产地与特征
+      famousTeaOrigins: {
+        "普洱熟茶": { origin: "云南西双版纳、普洱、临沧", feature: "条索紧结，色泽褐红，陈香醇厚" },
+        "安化黑茶": { origin: "湖南安化", feature: "条索卷曲，黑褐油润，金花茂盛" },
+        "六堡茶": { origin: "广西梧州六堡镇", feature: "条索紧结，色泽黑润，槟榔香" },
+        "茯砖茶": { origin: "湖南安化、陕西泾阳", feature: "砖形紧实，金花（冠突散囊菌）茂盛" },
+        "青砖茶": { origin: "湖北赵李桥", feature: "砖形平整，色泽青褐，香气纯正" }
+      },
       brewing: {
         waterTemp: "100\u00B0C",
         teaAmount: "7-10g / 150ml",
@@ -137,7 +284,8 @@ const TEA_DATA = {
         suitableBody: ["寒性体质", "痰湿体质", "平和体质"],
         taboo: ["孕妇慎饮", "不宜空腹", "不宜过浓"]
       },
-      season: "冬季最佳"
+      season: "冬季最佳",
+      source: "《中国茶经》第8章"
     }
   ],
 

@@ -1156,6 +1156,117 @@ function renderBodyTypeResults() {
   });
 }
 
+// ========== Tea Comparison Table ==========
+function showTeaComparison() {
+  var modal = document.getElementById('tea-comparison-modal');
+  var tbody = document.getElementById('comparison-table-body');
+  
+  var data = [
+    { name: '绿茶', fermentation: '不发酵', nature: '寒凉', soupColor: '清绿明亮', taste: '鲜爽甘醇', famous: '龙井、碧螺春', body: '热性体质', storage: '密封冷藏，12个月' },
+    { name: '白茶', fermentation: '微发酵', nature: '凉', soupColor: '杏黄清澈', taste: '清甜醇和', famous: '白毫银针、白牡丹', body: '热性/平和质', storage: '干燥避光，可长期保存' },
+    { name: '黄茶', fermentation: '轻发酵', nature: '凉', soupColor: '黄亮', taste: '醇厚甘甜', famous: '君山银针、蒙顶黄芽', body: '热性/痰湿质', storage: '密封干燥，12个月' },
+    { name: '乌龙茶', fermentation: '半发酵', nature: '平', soupColor: '金黄橙黄', taste: '醇厚回甘', famous: '铁观音、大红袍', body: '多数体质', storage: '密封干燥，24个月' },
+    { name: '红茶', fermentation: '全发酵', nature: '温', soupColor: '红艳明亮', taste: '甜醇浓厚', famous: '正山小种、祁门红茶', body: '寒性/虚性体质', storage: '密封干燥，24个月' },
+    { name: '黑茶', fermentation: '后发酵', nature: '温', soupColor: '红浓明亮', taste: '醇厚顺滑', famous: '普洱、安化黑茶', body: '寒性/痰湿质', storage: '通风干燥，可长期保存' }
+  ];
+  
+  var html = '';
+  data.forEach(function(row) {
+    html += '<tr>' +
+      '<td><strong>' + row.name + '</strong></td>' +
+      '<td>' + row.fermentation + '</td>' +
+      '<td>' + row.nature + '</td>' +
+      '<td>' + row.soupColor + '</td>' +
+      '<td>' + row.taste + '</td>' +
+      '<td>' + row.famous + '</td>' +
+      '<td>' + row.body + '</td>' +
+      '<td>' + row.storage + '</td>' +
+    '</tr>';
+  });
+  
+  tbody.innerHTML = html;
+  modal.classList.add('active');
+}
+
+// ========== Compatibility Modal ==========
+function showCompatibility() {
+  var modal = document.getElementById('compatibility-modal');
+  modal.classList.add('active');
+}
+
+// ========== Disclaimer Modal ==========
+function showDisclaimer() {
+  var modal = document.getElementById('disclaimer-modal');
+  modal.classList.add('active');
+}
+
+// ========== References Modal ==========
+function showReferences() {
+  var modal = document.getElementById('references-modal');
+  modal.classList.add('active');
+}
+
+// ========== Close Modal ==========
+function closeModal(modalId) {
+  var modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+// ========== Enhanced Brew Detail with Source ==========
+var originalOpenBrewDetail = window.openBrewDetail;
+window.openBrewDetail = function(item) {
+  if (originalOpenBrewDetail) {
+    originalOpenBrewDetail(item);
+  }
+  
+  // Add source information
+  var detailContent = document.querySelector('#brew-detail .detail-content');
+  if (detailContent && !detailContent.querySelector('.detail-source')) {
+    var sourceDiv = document.createElement('div');
+    sourceDiv.className = 'detail-source';
+    
+    var sourceText = '';
+    if (item.category === 'flower') {
+      sourceText = '《本草纲目》（李时珍）';
+    } else if (item.category === 'herb') {
+      sourceText = '《中国药典》2025年版、卫健委《药食同源目录》';
+    } else if (item.category === 'wellness') {
+      sourceText = '北京市中医药管理局养生指南';
+    } else if (item.category === 'fruit') {
+      sourceText = '《食疗本草》（孟诜）、现代营养学研究';
+    } else {
+      sourceText = '《中国茶经》（陈宗懋主编）';
+    }
+    
+    sourceDiv.innerHTML = '<h4>知识来源</h4><p>' + sourceText + '</p>';
+    detailContent.appendChild(sourceDiv);
+  }
+};
+
+// ========== Enhanced Tea Detail with Source ==========
+var originalOpenTeaDetail = window.openTeaDetail;
+window.openTeaDetail = function(tea) {
+  if (originalOpenTeaDetail) {
+    originalOpenTeaDetail(tea);
+  }
+  
+  // Add source information
+  var detailContent = document.querySelector('#tea-detail .detail-content');
+  if (detailContent && !detailContent.querySelector('.detail-source')) {
+    var sourceDiv = document.createElement('div');
+    sourceDiv.className = 'detail-source';
+    sourceDiv.innerHTML = '<h4>知识来源</h4><p>《中国茶经》（陈宗懋主编）、GB/T 30766-2014《茶叶分类》、《中国名茶志》</p>';
+    detailContent.appendChild(sourceDiv);
+  }
+};
+
+// ========== Add source to tea categories ==========
+TEA_DATA.categories.forEach(function(cat) {
+  cat.source = '《中国茶经》、GB/T 30766-2014《茶叶分类》';
+});
+
 // ---- CUSTOM PAIRING ----
 var selectedMaterials = [];
 var currentPairingFilter = 'all';

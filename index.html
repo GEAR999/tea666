@@ -207,7 +207,28 @@
 
       <div class="divider" style="margin: 24px 0;"></div>
 
+      <div class="section-title">知识百科</div>
       <div class="profile-section">
+        <div class="profile-item" onclick="showTeaComparison()">
+          <span class="item-icon">&#x1F4CA;</span>
+          <span class="item-text">六大茶类对比总表</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showCompatibility()">
+          <span class="item-icon">&#x26A0;</span>
+          <span class="item-text">配伍禁忌须知</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showDisclaimer()">
+          <span class="item-icon">&#x1F4DC;</span>
+          <span class="item-text">免责声明</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+        <div class="profile-item" onclick="showReferences()">
+          <span class="item-icon">&#x1F4DA;</span>
+          <span class="item-text">参考资料</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
         <div class="profile-item" onclick="showAbout()">
           <span class="item-icon">&#x2139;</span>
           <span class="item-text">关于泡饮百科</span>
@@ -483,6 +504,182 @@
       </div>
     </div>
 
+    <!-- ========== TEA COMPARISON MODAL ========== -->
+    <div class="detail-overlay" id="tea-comparison-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('tea-comparison-modal')">&#x2190;</button>
+          <h2>六大茶类对比总表</h2>
+        </div>
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>茶类</th>
+                <th>发酵度</th>
+                <th>茶性</th>
+                <th>汤色</th>
+                <th>滋味</th>
+                <th>代表名茶</th>
+                <th>适合体质</th>
+                <th>储存方法</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-table-body"></tbody>
+          </table>
+        </div>
+        <div class="source-note">数据来源：《中国茶经》（陈宗懋主编）、GB/T 30766-2014《茶叶分类》</div>
+      </div>
+    </div>
+
+    <!-- ========== COMPATIBILITY MODAL ========== -->
+    <div class="detail-overlay" id="compatibility-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('compatibility-modal')">&#x2190;</button>
+          <h2>配伍禁忌须知</h2>
+        </div>
+        <div class="compatibility-content">
+          <div class="section-title">中药七情配伍</div>
+          <div class="info-block">
+            <p>中药配伍理论源自《神农本草经》，将药物配伍关系分为七种：</p>
+            <ul class="benefit-list">
+              <li><strong>单行</strong>：单味药使用，如独参汤</li>
+              <li><strong>相须</strong>：性能相似药物合用，增强疗效</li>
+              <li><strong>相使</strong>：主药+辅药，提高疗效</li>
+              <li><strong>相畏</strong>：一种药物毒性被另一种减轻</li>
+              <li><strong>相杀</strong>：一种药物能消除另一种毒性</li>
+              <li><strong>相恶</strong>：两药合用，相互削弱</li>
+              <li><strong>相反</strong>：合用产生毒性或副作用</li>
+            </ul>
+          </div>
+
+          <div class="section-title">十八反歌诀</div>
+          <div class="info-block warning-block">
+            <p class="verse">本草明载十八反，半蒌贝蔹及攻乌，</p>
+            <p class="verse">藻戟遂芫俱战草，诸参辛芍叛藜芦。</p>
+            <div class="verse-detail">
+              <p><strong>乌头反：</strong>半夏、瓜蒌、贝母、白蔹、白及</p>
+              <p><strong>甘草反：</strong>海藻、大戟、甘遂、芫花</p>
+              <p><strong>藜芦反：</strong>人参、沙参、丹参、玄参、细辛、芍药</p>
+            </div>
+          </div>
+
+          <div class="section-title">十九畏歌诀</div>
+          <div class="info-block warning-block">
+            <p class="verse">硫黄原是火中精，朴硝一见便相争；</p>
+            <p class="verse">水银莫与砒霜见，狼毒最怕密陀僧；</p>
+            <p class="verse">巴豆性烈最为上，偏与牵牛不顺情；</p>
+            <p class="verse">丁香莫与郁金见，牙硝难合京三棱；</p>
+            <p class="verse">川乌草乌不顺犀，人参最怕五灵脂；</p>
+            <p class="verse">官桂善能调冷气，若逢石脂便相欺。</p>
+          </div>
+
+          <div class="section-title">茶性体质搭配原则</div>
+          <div class="info-block">
+            <table class="body-tea-table">
+              <thead>
+                <tr><th>体质</th><th>推荐茶类</th><th>禁忌茶类</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>平和质</td><td>各类皆可</td><td>无特殊禁忌</td></tr>
+                <tr><td>气虚质</td><td>红茶、熟普</td><td>浓绿茶、生普</td></tr>
+                <tr><td>阳虚质</td><td>红茶、黑茶</td><td>绿茶、白茶</td></tr>
+                <tr><td>阴虚质</td><td>绿茶、白茶</td><td>浓红茶、黑茶</td></tr>
+                <tr><td>痰湿质</td><td>乌龙茶、普洱</td><td>甜腻茶饮</td></tr>
+                <tr><td>湿热质</td><td>绿茶、白茶</td><td>红茶、黑茶</td></tr>
+                <tr><td>血瘀质</td><td>花茶、绿茶</td><td>浓茶</td></tr>
+                <tr><td>气郁质</td><td>花茶、乌龙</td><td>浓茶</td></tr>
+                <tr><td>特禀质</td><td>淡茶为主</td><td>浓茶、新茶</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="source-note">数据来源：《神农本草经》、《儒门事亲》（张从正）、《医经小学》（李梴）、《中国药典》2025版</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== DISCLAIMER MODAL ========== -->
+    <div class="detail-overlay" id="disclaimer-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('disclaimer-modal')">&#x2190;</button>
+          <h2>免责声明</h2>
+        </div>
+        <div class="disclaimer-content">
+          <div class="disclaimer-item">
+            <h3>1. 信息性质说明</h3>
+            <p>本应用提供的所有内容（包括但不限于茶类知识、花草茶信息、中药材资料、养生茶饮配方、体质分析、搭配建议等）仅供学习参考和文化普及之用，不构成任何医疗建议、诊断或治疗方案。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>2. 医疗建议声明</h3>
+            <p>如有健康问题或疾病，请务必咨询专业医师或中医师。本应用中的中药材信息、养生茶饮配方、体质分析等内容不能替代专业医疗诊断和治疗。切勿依据本应用内容自行用药或延误就医。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>3. 个体差异提醒</h3>
+            <p>每个人的体质、健康状况、过敏源不同，对茶类、花草茶、中药材的反应可能存在差异。孕妇、哺乳期妇女、儿童、老年人、慢性病患者及正在服药者，在使用任何泡饮材料前，请咨询专业医师。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>4. 配伍禁忌说明</h3>
+            <p>本应用提供的配伍禁忌信息（包括十八反、十九畏等）源自传统中医典籍，仅供学习参考。实际用药配伍需由专业中医师根据个人情况辨证施治，请勿自行配药使用。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>5. 数据来源说明</h3>
+            <p>本应用内容参考了《中国茶经》《本草纲目》《中国药典》《神农本草经》等典籍及现代研究成果，但可能存在疏漏或更新不及时的情况。如有出入，以最新权威出版物为准。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>6. 使用风险自担</h3>
+            <p>用户依据本应用信息所做的任何决策和行为，风险由用户自行承担。本应用开发者不对因使用本应用内容而产生的任何直接或间接损失承担责任。</p>
+          </div>
+          <div class="disclaimer-item">
+            <h3>7. 知识产权声明</h3>
+            <p>本应用中的原创内容版权归开发者所有。引用的典籍内容、研究数据等版权归原作者或出版机构所有。如有版权问题，请联系开发者处理。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== REFERENCES MODAL ========== -->
+    <div class="detail-overlay" id="references-modal">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="back-btn" onclick="closeModal('references-modal')">&#x2190;</button>
+          <h2>参考资料</h2>
+        </div>
+        <div class="references-content">
+          <div class="section-title">茶学典籍</div>
+          <ul class="reference-list">
+            <li>《中国茶经》 - 陈宗懋主编，上海文化出版社</li>
+            <li>《茶经》 - 陆羽著（唐代）</li>
+            <li>GB/T 30766-2014《茶叶分类》 - 国家标准</li>
+            <li>《中国名茶志》 - 中国农业出版社</li>
+          </ul>
+
+          <div class="section-title">中医药典籍</div>
+          <ul class="reference-list">
+            <li>《本草纲目》 - 李时珍著（明代）</li>
+            <li>《神农本草经》 - 汉代典籍</li>
+            <li>《中国药典》2025年版 - 国家药典委员会</li>
+            <li>《儒门事亲》 - 张从正著（金代）</li>
+            <li>《医经小学》 - 李梴著（明代）</li>
+            <li>《食疗本草》 - 孟诜著（唐代）</li>
+          </ul>
+
+          <div class="section-title">现代研究</div>
+          <ul class="reference-list">
+            <li>GB/T 46939-2025《中医体质分类与判定》 - 国家标准</li>
+            <li>卫健委《药食同源目录》 - 2023年版</li>
+            <li>北京市中医药管理局养生指南</li>
+            <li>中国茶叶学会科普资料</li>
+            <li>人民日报健康客户端 - 茶饮养生专栏</li>
+          </ul>
+
+          <div class="source-note">本应用内容综合整理自以上权威来源，如有更新请以最新版本为准。</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ========== BOTTOM NAVIGATION ========== -->
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
@@ -510,6 +707,7 @@
 
   <script src="/data/tea-data.js"></script>
   <script src="/data/brew-data.js"></script>
+  <script src="/data/compatibility-data.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>
