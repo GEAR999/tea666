@@ -1263,7 +1263,23 @@ function updateSelectedMaterialsDisplay() {
 function getAllBrewItems() {
   return [].concat(
     TEA_DATA.categories.map(function(c) {
-      return { id: c.id, name: c.name, emoji: c.emoji, category: 'tea', nature: c.nature || '' };
+      return {
+        id: c.id,
+        name: c.name,
+        emoji: c.emoji,
+        category: 'tea',
+        nature: c.nature || '',
+        effects: c.health ? c.health.benefits : [],
+        suitableFor: c.health ? c.health.suitableBody : [],
+        contraindications: c.health ? c.health.taboo : [],
+        brewing: c.brewing ? {
+          temperature: c.brewing.waterTemp,
+          amount: c.brewing.teaAmount,
+          time: c.brewing.steepTime,
+          infusions: c.brewing.infusions
+        } : null,
+        pairings: c.pairings || []
+      };
     }),
     BREW_DATA.flowerTeas,
     BREW_DATA.herbs,
