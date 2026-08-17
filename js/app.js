@@ -1527,6 +1527,13 @@ function renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv) {
     }
   });
   
+  // For 3+ materials, do comprehensive analysis
+  if (selectedItems.length >= 3) {
+    renderComprehensiveAnalysis(selectedItems, compatibility, scoreDiv, contentDiv);
+    return;
+  }
+  
+  // For 2 materials, use the existing logic
   // Determine score and type
   var score, scoreClass, typeLabel, typeIcon;
   
@@ -1592,11 +1599,6 @@ function renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv) {
       '<div class="analysis-section-content">' + (match ? match.description : generateDefaultDescription(selectedItems)) + '</div>' +
     '</div>';
   
-  // For 3+ materials, show pairwise analysis
-  if (selectedItems.length >= 3) {
-    html += renderPairwiseAnalysis(selectedItems, compatibility);
-  }
-  
   // Brewing advice
   if (match && match.brewing) {
     html +=
@@ -1642,6 +1644,270 @@ function renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv) {
   }
   
   contentDiv.innerHTML = html;
+}
+
+function renderComprehensiveAnalysis(selectedItems, compatibility, scoreDiv, contentDiv) {
+  // Analyze all pairs for conflicts and synergies
+  var conflicts = [];
+  var synergies = [];
+  var cautions = [];
+  var neutralPairs = [];
+  
+  for (var i = 0; i < selectedItems.length; i++) {
+    for (var j = i + 1; j < selectedItems.length; j++) {
+      var item1 = selectedItems[i];
+      var item2 = selectedItems[j];
+      
+      // Find compatibility for this pair
+      var pairMatch = null;
+      compatibility.forEach(function(comp) {
+        if (comp.materials.length === 2) {
+          var has1 = comp.materials.indexOf(item1.id) > -1;
+          var has2 = comp.materials.indexOf(item2.id) > -1;
+          if (has1 && has2) {
+            pairMatch = comp;
+          }
+        }
+      });
+      
+      var pairInfo = {
+        item1: item1,
+        item2: item2,
+        match: pairMatch
+      };
+      
+      if (pairMatch) {
+        if (pairMatch.type === 'conflict') {
+          conflicts.push(pairInfo);
+        } else if (pairMatch.type === 'synergy') {
+          synergies.push(pairInfo);
+        } else if (pairMatch.type === 'caution') {
+          cautions.push(pairInfo);
+        } else {
+          neutralPairs.push(pairInfo);
+        }
+      } else {
+        neutralPairs.push(pairInfo);
+      }
+    }
+  }
+  
+  // Calculate overall score
+  var baseScore = 4;
+  if (conflicts.length > 0) baseScore = 2;
+  else if (cautions.length > 0) baseScore = 3;
+  if (synergies.length > 0) baseScore = Math.min(5, baseScore + 1);
+  
+  var score = baseScore;
+  var scoreClass = score >= 4 ? 'score-good' : score >= 3 ? 'score-caution' : 'score-bad';
+  
+  // Render score
+  var stars = '';
+  for (var k = 0; k < 5; k++) {
+    stars += k < score ? '★' : '☆';
+  }
+  scoreDiv.className = 'analysis-score ' + scoreClass;
+  scoreDiv.innerHTML = stars;
+  
+  var html = '';
+  
+  // Overall effect analysis
+  html +=
+    '<div class="analysis-section">' +
+      '<div class="analysis-section-title"><span class="icon">🍵</span> 整体搭配效果</div>' +
+      '<div class="analysis-section-content">';
+  
+  var overallEffect = generateOverallEffect(selectedItems, synergies, conflicts);
+  html += '<p>' + overallEffect + '</p>';
+  html += '</div></div>';
+  
+  // Main conflicts (if any)
+  if (conflicts.length > 0) {
+    html +=
+      '<div class="analysis-warning">' +
+        '<div class="warning-title">⚠ 主要矛盾</div>' +
+        '<div class="warning-content">';
+    conflicts.forEach(function(c) {
+      html += '<p style="margin:4px 0;"><strong>' + c.item1.name + ' + ' + c.item2.name + '：</strong>' + (c.match.description || '功效冲突，建议避免搭配') + '</p>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Synergy highlights
+  if (synergies.length > 0) {
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">✨</span> 协同亮点</div>' +
+        '<div class="analysis-section-content">';
+    synergies.forEach(function(s) {
+      html += '<div style="margin-bottom:8px;padding:8px;background:rgba(107,158,91,0.1);border-radius:8px;">' +
+        '<div style="font-weight:500;color:#6b9e5b;">' + s.item1.name + ' + ' + s.item2.name + '</div>' +
+        '<div style="font-size:12px;color:#6b6b6b;margin-top:4px;">' + (s.match.description || '协同增效') + '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Cautions
+  if (cautions.length > 0) {
+    html +=
+      '<div class="analysis-warning" style="background:rgba(255,152,0,0.1);border-color:rgba(255,152,0,0.3);">' +
+        '<div class="warning-title" style="color:#ff9800;">⚡ 用量提示</div>' +
+        '<div class="warning-content">';
+    cautions.forEach(function(c) {
+      html += '<p style="margin:4px 0;color:#f57c00;"><strong>' + c.item1.name + ' + ' + c.item2.name + '：</strong>' + (c.match.warning || c.match.description || '需注意用量比例') + '</p>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Comprehensive suitable population
+  html +=
+    '<div class="analysis-section">' +
+      '<div class="analysis-section-title"><span class="icon">👥</span> 综合适用人群</div>' +
+      '<div class="analysis-suitable">' + generateComprehensiveSuitableFor(selectedItems) + '</div>' +
+    '</div>';
+  
+  // Comprehensive contraindications
+  var contraindications = generateComprehensiveContraindications(selectedItems);
+  if (contraindications.length > 0) {
+    html +=
+      '<div class="analysis-warning" style="background:rgba(196,117,91,0.1);border-color:rgba(196,117,91,0.3);">' +
+        '<div class="warning-title" style="color:#c4755b;">⚠ 综合禁忌提醒</div>' +
+        '<div class="warning-content" style="color:#c4755b;">';
+    contraindications.forEach(function(c) {
+      html += '<p style="margin:4px 0;">' + c + '</p>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Suggested brewing method
+  html +=
+    '<div class="analysis-section">' +
+      '<div class="analysis-section-title"><span class="icon">🫖</span> 建议冲泡方式</div>' +
+      '<div class="analysis-section-content">' + generateComprehensiveBrewingAdvice(selectedItems) + '</div>' +
+    '</div>';
+  
+  // Pairwise analysis
+  html += renderPairwiseAnalysis(selectedItems, compatibility);
+  
+  contentDiv.innerHTML = html;
+}
+
+function generateOverallEffect(selectedItems, synergies, conflicts) {
+  var effects = [];
+  selectedItems.forEach(function(item) {
+    if (item.effects && item.effects.length > 0) {
+      effects = effects.concat(item.effects);
+    }
+  });
+  
+  // Remove duplicates
+  var uniqueEffects = [];
+  effects.forEach(function(e) {
+    if (uniqueEffects.indexOf(e) === -1) {
+      uniqueEffects.push(e);
+    }
+  });
+  
+  var effectText = '此搭配组合主要具有' + uniqueEffects.slice(0, 4).join('、') + '等功效。';
+  
+  if (synergies.length > 0) {
+    effectText += '其中' + synergies.map(function(s) { return s.item1.name + '与' + s.item2.name; }).join('、') + '搭配可协同增效。';
+  }
+  
+  if (conflicts.length > 0) {
+    effectText += '但需注意' + conflicts.map(function(c) { return c.item1.name + '与' + c.item2.name; }).join('、') + '存在功效冲突。';
+  }
+  
+  return effectText;
+}
+
+function generateComprehensiveSuitableFor(selectedItems) {
+  var suitableFor = [];
+  selectedItems.forEach(function(item) {
+    if (item.suitableFor && item.suitableFor.length > 0) {
+      suitableFor = suitableFor.concat(item.suitableFor);
+    }
+  });
+  
+  // Count occurrences and get most common
+  var counts = {};
+  suitableFor.forEach(function(s) {
+    counts[s] = (counts[s] || 0) + 1;
+  });
+  
+  var sorted = Object.keys(counts).sort(function(a, b) { return counts[b] - counts[a]; });
+  var topSuitable = sorted.slice(0, 5);
+  
+  var html = '';
+  topSuitable.forEach(function(s) {
+    html += '<span>' + s + '</span>';
+  });
+  
+  return html;
+}
+
+function generateComprehensiveContraindications(selectedItems) {
+  var contraindications = [];
+  selectedItems.forEach(function(item) {
+    if (item.contraindications && item.contraindications.length > 0) {
+      contraindications = contraindications.concat(item.contraindications);
+    }
+  });
+  
+  // Remove duplicates
+  var unique = [];
+  contraindications.forEach(function(c) {
+    if (unique.indexOf(c) === -1) {
+      unique.push(c);
+    }
+  });
+  
+  return unique;
+}
+
+function generateComprehensiveBrewingAdvice(selectedItems) {
+  // Find the highest temperature needed
+  var maxTemp = 80;
+  var totalTime = 5;
+  
+  selectedItems.forEach(function(item) {
+    if (item.brewing) {
+      var temp = parseInt(item.brewing.temperature) || 80;
+      if (temp > maxTemp) maxTemp = temp;
+    }
+  });
+  
+  var advice = '建议水温' + maxTemp + '℃左右，';
+  
+  // Determine brewing order based on material types
+  var teaItems = [];
+  var herbItems = [];
+  var flowerItems = [];
+  
+  selectedItems.forEach(function(item) {
+    if (item.category === 'tea') {
+      teaItems.push(item.name);
+    } else if (item.category === 'flower' || item.category === 'flowerTea') {
+      flowerItems.push(item.name);
+    } else {
+      herbItems.push(item.name);
+    }
+  });
+  
+  if (teaItems.length > 0) {
+    advice += '先冲泡' + teaItems.join('、') + '，';
+  }
+  if (herbItems.length > 0) {
+    advice += '再加入' + herbItems.join('、') + '，';
+  }
+  if (flowerItems.length > 0) {
+    advice += '最后放入' + flowerItems.join('、') + '焖泡';
+  }
+  
+  advice += '。总冲泡时间约' + totalTime + '分钟，可反复冲泡2-3次。';
+  
+  return advice;
 }
 
 function renderPairwiseAnalysis(selectedItems, compatibility) {
