@@ -1225,7 +1225,7 @@ function toggleMaterialSelection(itemId) {
   updateSelectedMaterialsDisplay();
   renderMaterialSelectGrid();
   
-  if (selectedMaterials.length >= 2) {
+  if (selectedMaterials.length >= 1) {
     analyzePairing();
   } else {
     document.getElementById('pairing-analysis').style.display = 'none';
@@ -1285,6 +1285,99 @@ function analyzePairing() {
     return allItems.find(function(i) { return i.id === id; });
   }).filter(Boolean);
   
+  // Handle single material case
+  if (selectedMaterials.length === 1) {
+    renderSingleMaterialAnalysis(selectedItems[0], scoreDiv, contentDiv);
+    return;
+  }
+  
+  // Handle multiple materials case
+  renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv);
+}
+
+function renderSingleMaterialAnalysis(item, scoreDiv, contentDiv) {
+  if (!item) return;
+  
+  // Single material gets a default good score
+  var score = 4;
+  var scoreClass = 'score-good';
+  
+  // Render score
+  var stars = '';
+  for (var i = 0; i < 5; i++) {
+    stars += i < score ? '★' : '☆';
+  }
+  scoreDiv.className = 'analysis-score ' + scoreClass;
+  scoreDiv.innerHTML = stars;
+  
+  var html = '';
+  
+  // Material info header
+  html +=
+    '<div class="analysis-section">' +
+      '<div class="analysis-section-title"><span class="icon">🌿</span> 单品分析：' + item.name + '</div>' +
+      '<div class="analysis-section-content">';
+  
+  // Basic info
+  if (item.nature || item.flavor) {
+    html += '<p><strong>性味：</strong>' + (item.nature || '') + ' ' + (item.flavor || '') + '</p>';
+  }
+  
+  // Effects
+  if (item.effects && item.effects.length > 0) {
+    html += '<p><strong>主要功效：</strong>' + item.effects.join('、') + '</p>';
+  }
+  
+  // Suitable for
+  if (item.suitableFor && item.suitableFor.length > 0) {
+    html += '<p><strong>适合人群：</strong>' + item.suitableFor.join('、') + '</p>';
+  }
+  
+  // Contraindications
+  if (item.contraindications && item.contraindications.length > 0) {
+    html += '<p style="color:#c4755b;"><strong>禁忌：</strong>' + item.contraindications.join('、') + '</p>';
+  }
+  
+  html += '</div></div>';
+  
+  // Brewing method
+  if (item.brewing) {
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">🫖</span> 冲泡方法</div>' +
+        '<div class="analysis-section-content">';
+    
+    if (item.brewing.temperature) {
+      html += '<p><strong>水温：</strong>' + item.brewing.temperature + '</p>';
+    }
+    if (item.brewing.amount) {
+      html += '<p><strong>用量：</strong>' + item.brewing.amount + '</p>';
+    }
+    if (item.brewing.time) {
+      html += '<p><strong>冲泡时间：</strong>' + item.brewing.time + '</p>';
+    }
+    if (item.brewing.infusions) {
+      html += '<p><strong>可冲泡次数：</strong>' + item.brewing.infusions + '</p>';
+    }
+    
+    html += '</div></div>';
+  }
+  
+  // Pairing suggestions
+  if (item.pairings && item.pairings.length > 0) {
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">✨</span> 推荐搭配</div>' +
+        '<div class="analysis-section-content">' +
+          '<p>' + item.pairings.join('、') + '</p>' +
+        '</div>' +
+      '</div>';
+  }
+  
+  contentDiv.innerHTML = html;
+}
+
+function renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv) {
   var compatibility = BREW_DATA.compatibility || [];
   
   // Check for exact match or partial match
@@ -1368,12 +1461,24 @@ function analyzePairing() {
       '<div class="analysis-section-content">' + (match ? match.description : generateDefaultDescription(selectedItems)) + '</div>' +
     '</div>';
   
+  // For 3+ materials, show pairwise analysis
+  if (selectedItems.length >= 3) {
+    html += renderPairwiseAnalysis(selectedItems, compatibility);
+  }
+  
   // Brewing advice
   if (match && match.brewing) {
     html +=
       '<div class="analysis-section">' +
         '<div class="analysis-section-title"><span class="icon">🫖</span> 冲泡建议</div>' +
         '<div class="analysis-section-content">' + match.brewing + '</div>' +
+      '</div>';
+  } else {
+    // Generate brewing advice for custom pairing
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">🫖</span> 冲泡建议</div>' +
+        '<div class="analysis-section-content">' + generateBrewingAdvice(selectedItems) + '</div>' +
       '</div>';
   }
   
@@ -1387,6 +1492,13 @@ function analyzePairing() {
       html += '<span>' + s + '</span>';
     });
     html += '</div></div>';
+  } else {
+    // Generate suitable for based on materials
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">👥</span> 适合人群</div>' +
+        '<div class="analysis-suitable">' + generateSuitableFor(selectedItems) + '</div>' +
+      '</div>';
   }
   
   // Caution warning
@@ -1399,6 +1511,126 @@ function analyzePairing() {
   }
   
   contentDiv.innerHTML = html;
+}
+
+function renderPairwiseAnalysis(selectedItems, compatibility) {
+  var html = '<div class="analysis-section">' +
+    '<div class="analysis-section-title"><span class="icon">🔗</span> 材料间相互作用</div>' +
+    '<div class="analysis-section-content">';
+  
+  // Analyze each pair
+  for (var i = 0; i < selectedItems.length; i++) {
+    for (var j = i + 1; j < selectedItems.length; j++) {
+      var item1 = selectedItems[i];
+      var item2 = selectedItems[j];
+      
+      // Find compatibility for this pair
+      var pairMatch = null;
+      compatibility.forEach(function(comp) {
+        if (comp.materials.length === 2) {
+          var has1 = comp.materials.indexOf(item1.id) > -1;
+          var has2 = comp.materials.indexOf(item2.id) > -1;
+          if (has1 && has2) {
+            pairMatch = comp;
+          }
+        }
+      });
+      
+      var pairIcon = '🍵';
+      var pairType = '可搭配';
+      var pairDesc = '无明显相互作用，可正常搭配饮用';
+      
+      if (pairMatch) {
+        if (pairMatch.type === 'synergy') {
+          pairIcon = '✨';
+          pairType = '协同增效';
+          pairDesc = pairMatch.description;
+        } else if (pairMatch.type === 'neutralize') {
+          pairIcon = '☯';
+          pairType = '性味中和';
+          pairDesc = pairMatch.description;
+        } else if (pairMatch.type === 'conflict') {
+          pairIcon = '⚠';
+          pairType = '功效冲突';
+          pairDesc = pairMatch.description;
+        } else if (pairMatch.type === 'caution') {
+          pairIcon = '⚡';
+          pairType = '需谨慎';
+          pairDesc = pairMatch.description;
+        }
+      }
+      
+      html += '<div style="margin-bottom:8px;padding:8px;background:rgba(123,158,107,0.05);border-radius:8px;">' +
+        '<div style="font-weight:500;margin-bottom:4px;">' + pairIcon + ' ' + item1.name + ' + ' + item2.name + '：' + pairType + '</div>' +
+        '<div style="font-size:12px;color:#6b6b6b;">' + pairDesc + '</div>' +
+      '</div>';
+    }
+  }
+  
+  html += '</div></div>';
+  return html;
+}
+
+function generateBrewingAdvice(items) {
+  // Find the highest temperature needed
+  var maxTemp = 80;
+  items.forEach(function(item) {
+    if (item.brewing && item.brewing.temperature) {
+      var temp = parseInt(item.brewing.temperature);
+      if (temp > maxTemp) maxTemp = temp;
+    }
+  });
+  
+  // Find the longest brewing time
+  var maxTime = 3;
+  items.forEach(function(item) {
+    if (item.brewing && item.brewing.time) {
+      var time = parseInt(item.brewing.time);
+      if (time > maxTime) maxTime = time;
+    }
+  });
+  
+  var advice = '建议水温 ' + maxTemp + '-' + (maxTemp + 5) + '℃，';
+  advice += '冲泡 ' + maxTime + '-' + (maxTime + 2) + '分钟后饮用。';
+  advice += '可反复冲泡 2-3 次。';
+  
+  return advice;
+}
+
+function generateSuitableFor(items) {
+  var suitable = [];
+  
+  // Check nature of all items
+  var hasCold = false;
+  var hasWarm = false;
+  
+  items.forEach(function(item) {
+    if (item.nature) {
+      if (item.nature.indexOf('寒') > -1 || item.nature.indexOf('凉') > -1) {
+        hasCold = true;
+      }
+      if (item.nature.indexOf('温') > -1 || item.nature.indexOf('热') > -1) {
+        hasWarm = true;
+      }
+    }
+  });
+  
+  if (hasCold && !hasWarm) {
+    suitable.push('热性体质');
+    suitable.push('上火人群');
+  } else if (hasWarm && !hasCold) {
+    suitable.push('寒性体质');
+    suitable.push('手脚冰凉');
+  } else {
+    suitable.push('一般人群');
+  }
+  
+  var html = '';
+  suitable.forEach(function(s) {
+    html += '<span>' + s + '</span>';
+  });
+  
+  return html;
 }
 
 function calculateNatureCompatibility(items) {
@@ -1442,8 +1674,8 @@ function clearSelectedMaterials() {
 }
 
 function savePairingRecipe() {
-  if (selectedMaterials.length < 2) {
-    alert('请至少选择2种材料');
+  if (selectedMaterials.length < 1) {
+    alert('请至少选择1种材料');
     return;
   }
   
@@ -1453,7 +1685,8 @@ function savePairingRecipe() {
     return item ? item.name : '';
   }).filter(Boolean);
   
-  var recipeName = prompt('为这个搭配方案命名：', names.join('+') + '茶');
+  var defaultName = names.length === 1 ? names[0] + '茶' : names.join('+') + '茶';
+  var recipeName = prompt('为这个搭配方案命名：', defaultName);
   if (!recipeName) return;
   
   var favorites = JSON.parse(localStorage.getItem('teaFavorites') || '[]');
