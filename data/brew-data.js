@@ -975,6 +975,181 @@ const BREW_DATA = {
       materials: ["honeysuckle", "chrysanthemum"],
       effect: "清热解毒",
       description: "适合风热感冒、咽喉肿痛者"
+    },
+    {
+      id: "sleep_tea",
+      name: "安神助眠茶",
+      materials: ["lavender", "rose"],
+      effect: "安神助眠",
+      description: "适合失眠多梦、情绪焦虑者"
+    },
+    {
+      id: "lung_tea",
+      name: "润肺止咳茶",
+      materials: ["tangerine_peel", "chrysanthemum"],
+      effect: "润肺止咳",
+      description: "适合咳嗽痰多、咽喉干燥者"
+    },
+    {
+      id: "soothe_liver_tea",
+      name: "疏肝解郁茶",
+      materials: ["rose", "chrysanthemum"],
+      effect: "疏肝解郁",
+      description: "适合情绪抑郁、肝气郁结者"
+    },
+    {
+      id: "energy_tea",
+      name: "补气提神茶",
+      materials: ["astragalus", "red_date"],
+      effect: "补气提神",
+      description: "适合气虚乏力、精神不振者"
+    },
+    {
+      id: "fire_clear_tea",
+      name: "清热降火茶",
+      materials: ["honeysuckle", "chrysanthemum", "goji"],
+      effect: "清热降火",
+      description: "适合上火、口腔溃疡者"
+    },
+    {
+      id: "slim_tea",
+      name: "减肥消脂茶",
+      materials: ["hawthorn", "tangerine_peel"],
+      effect: "消脂减肥",
+      description: "适合肥胖、高血脂者"
+    },
+    {
+      id: "immune_tea",
+      name: "增强免疫茶",
+      materials: ["astragalus", "goji", "red_date"],
+      effect: "增强免疫",
+      description: "适合体质虚弱、易感冒者"
+    },
+    {
+      id: "fatigue_tea",
+      name: "缓解疲劳茶",
+      materials: ["codonopsis", "astragalus"],
+      effect: "缓解疲劳",
+      description: "适合工作疲劳、体力透支者"
+    },
+    {
+      id: "fruit_vitamin_tea",
+      name: "维C果茶",
+      materials: ["lemon", "orange"],
+      effect: "补充维C",
+      description: "适合日常保健、美白肌肤"
+    },
+    {
+      id: "apple_cinnamon_tea",
+      name: "苹果肉桂茶",
+      materials: ["apple", "cinnamon"],
+      effect: "温中暖胃",
+      description: "适合秋冬季节饮用"
+    },
+    {
+      id: "goji_chrysanthemum_cassia",
+      name: "枸杞菊花决明子茶",
+      materials: ["goji", "chrysanthemum", "cassia"],
+      effect: "清肝明目润肠",
+      description: "适合肝火旺盛、便秘者"
+    },
+    {
+      id: "red_date_ginger_brown_sugar",
+      name: "红枣姜茶红糖水",
+      materials: ["red_date", "ginger", "brown_sugar"],
+      effect: "温经散寒补血",
+      description: "适合女性经期调理"
+    },
+    {
+      id: "honeysuckle_mint_tea",
+      name: "金银花薄荷茶",
+      materials: ["honeysuckle", "mint"],
+      effect: "清热解毒利咽",
+      description: "适合风热感冒、咽喉肿痛"
+    },
+    {
+      id: "tangerine_peel_puerh_chrysanthemum",
+      name: "陈皮普洱菊花茶",
+      materials: ["tangerine_peel", "puerh_tea", "chrysanthemum"],
+      effect: "消食去腻清肝",
+      description: "适合饭后饮用，降脂清肝"
+    },
+    {
+      id: "longan_red_date_goji",
+      name: "桂圆红枣枸杞茶",
+      materials: ["longan", "red_date", "goji"],
+      effect: "补血安神明目",
+      description: "适合气血不足、失眠者"
+    },
+    {
+      id: "rose_honeysuckle_tea",
+      name: "玫瑰金银花茶",
+      materials: ["rose", "honeysuckle"],
+      effect: "疏肝清热解毒",
+      description: "适合肝郁化火、长痘者"
+    },
+    {
+      id: "astragalus_codonopsis_tea",
+      name: "黄芪党参补气茶",
+      materials: ["astragalus", "codonopsis"],
+      effect: "双补脾肺之气",
+      description: "适合气虚乏力、易感冒者"
+    },
+    {
+      id: "hawthorn_tangerine_peel_tea",
+      name: "山楂陈皮消食茶",
+      materials: ["hawthorn", "tangerine_peel"],
+      effect: "消食化积理气",
+      description: "适合食积腹胀、消化不良"
+    },
+    {
+      id: "lemon_honey_tea",
+      name: "柠檬蜂蜜茶",
+      materials: ["lemon", "honey"],
+      effect: "润肠通便美白",
+      description: "适合便秘、皮肤暗沉者"
+    },
+    {
+      id: "passion_fruit_lemon_tea",
+      name: "百香果柠檬茶",
+      materials: ["passion_fruit", "lemon"],
+      effect: "补充维C开胃",
+      description: "适合食欲不振、需要补充维C者"
+    },
+    {
+      id: "apple_hawthorn_tea",
+      name: "苹果山楂茶",
+      materials: ["apple", "hawthorn"],
+      effect: "消食降脂开胃",
+      description: "适合消化不良、高血脂者"
+    },
+    {
+      id: "orange_ginger_tea",
+      name: "橙子姜茶",
+      materials: ["orange", "ginger"],
+      effect: "温中散寒理气",
+      description: "适合风寒感冒、胃寒者"
+    },
+    {
+      id: "goji_longan_tea",
+      name: "枸杞桂圆茶",
+      materials: ["goji", "longan"],
+      effect: "滋补肝肾养血",
+      description: "适合肝肾不足、失眠健忘者"
+    },
+    {
+      id: "chrysanthemum_cassia_tea",
+      name: "菊花决明子茶",
+      materials: ["chrysanthemum", "cassia"],
+      effect: "清肝明目通便",
+      description: "适合肝火旺盛、便秘者"
+    },
+    {
+      id: "rose_red_date_longan",
+      name: "玫瑰红枣桂圆茶",
+      materials: ["rose", "red_date", "longan"],
+      effect: "疏肝养血安神",
+      description: "适合女性气血不足、情绪不佳"
     }
   ]
 };
