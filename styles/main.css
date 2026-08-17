@@ -711,6 +711,52 @@ body {
   margin-bottom: 10px;
 }
 
+/* Custom Time Input */
+.timer-custom-time {
+  width: 100%;
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16px;
+}
+
+.timer-custom-time label {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.custom-time-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.custom-time-input input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-size: 0.9rem;
+  background: var(--color-warm-white);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-time-input input:focus {
+  border-color: var(--color-primary);
+}
+
+.timer-btn-small {
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
 .infusion-list {
   display: flex;
   flex-direction: column;

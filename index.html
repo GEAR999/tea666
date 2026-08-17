@@ -166,6 +166,14 @@
           <div class="timer-tea-grid" id="timer-tea-grid"></div>
         </div>
 
+        <div class="timer-custom-time">
+          <label>自定义时间（秒）</label>
+          <div class="custom-time-input">
+            <input type="number" id="custom-time-input" placeholder="输入秒数" min="1" max="600" />
+            <button class="timer-btn timer-btn-small" onclick="applyCustomTime()">应用</button>
+          </div>
+        </div>
+
         <div class="timer-ring-wrapper">
           <svg class="timer-ring-svg" viewBox="0 0 220 220">
             <circle class="timer-ring-bg" cx="110" cy="110" r="100" />

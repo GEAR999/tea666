@@ -516,16 +516,23 @@ function toggleTimer() {
 }
 
 function startCountdown() {
+  // Record start time for accurate timing even when tab is backgrounded
+  timerState.startTime = Date.now();
+  timerState.expectedRemaining = timerState.remaining;
+
   timerState.interval = setInterval(function() {
+    // Calculate actual remaining time based on elapsed time
+    var elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+    timerState.remaining = Math.max(0, timerState.expectedRemaining - elapsed);
+
     if (timerState.remaining <= 0) {
       clearInterval(timerState.interval);
       timerState.running = false;
       onTimerComplete();
       return;
     }
-    timerState.remaining--;
     updateTimerDisplay();
-  }, 1000);
+  }, 100); // Update more frequently for smoother display
 }
 
 function onTimerComplete() {
@@ -544,6 +551,43 @@ function onTimerComplete() {
   // Vibrate if supported
   if (navigator.vibrate) {
     navigator.vibrate([200, 100, 200, 100, 200]);
+  }
+
+  // Play sound notification
+  playTimerSound();
+}
+
+// Play timer completion sound using Web Audio API
+function playTimerSound() {
+  try {
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Create a pleasant chime sound
+    function playTone(freq, startTime, duration) {
+      var oscillator = audioCtx.createOscillator();
+      var gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.frequency.value = freq;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.3, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
+    }
+
+    // Play a three-tone chime
+    var now = audioCtx.currentTime;
+    playTone(523.25, now, 0.3); // C5
+    playTone(659.25, now + 0.15, 0.3); // E5
+    playTone(783.99, now + 0.3, 0.4); // G5
+  } catch (e) {
+    // Audio not supported, fall back to vibration only
+    console.log('Audio notification not supported');
   }
 }
 
@@ -602,6 +646,39 @@ function renderInfusionList() {
   });
 }
 
+// Apply custom time from input
+function applyCustomTime() {
+  var input = document.getElementById('custom-time-input');
+  var seconds = parseInt(input.value, 10);
+
+  if (isNaN(seconds) || seconds < 1) {
+    showToast('请输入有效的时间（1-600秒）');
+    return;
+  }
+
+  if (seconds > 600) {
+    seconds = 600;
+    input.value = 600;
+  }
+
+  // Set custom time
+  timerState.totalTime = seconds;
+  timerState.remaining = seconds;
+  timerState.infusionTimes = [seconds];
+  timerState.currentInfusion = 0;
+  timerState.running = false;
+  timerState.paused = false;
+
+  // Update UI
+  document.getElementById('timer-start-btn').textContent = '开始';
+  document.getElementById('timer-status').textContent = '自定义 ' + seconds + '秒';
+  document.getElementById('timer-display').classList.remove('finished');
+  document.getElementById('infusion-info').style.display = 'none';
+
+  updateTimerDisplay();
+  showToast('已设置冲泡时间：' + seconds + '秒');
+}
+
 // Override toggleTimer to handle "next infusion" state
 var originalToggleTimer = toggleTimer;
 toggleTimer = function() {
@@ -612,6 +689,14 @@ toggleTimer = function() {
   }
   originalToggleTimer();
 };
+
+// Handle page visibility change for background timer support
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && timerState.running) {
+    // Page became visible, update display immediately
+    updateTimerDisplay();
+  }
+});
 
 // ---- PROFILE PAGE ----
 function initProfilePage() {
