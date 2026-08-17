@@ -739,5 +739,226 @@ const BREW_DATA = {
       label: "胃酸过多",
       avoid: ["lemon", "passion_fruit", "hawthorn", "orange_slice"]
     }
-  }
+  },
+
+  // ========== 配伍关系知识库（用于自定义搭配检测） ==========
+  // type: synergy(协同增效), conflict(功效冲突), neutralize(性味中和), caution(需谨慎)
+  compatibility: [
+    // 协同增效组合
+    {
+      materials: ["chrysanthemum", "goji"],
+      type: "synergy",
+      name: "清肝明目",
+      effect: "菊花清肝火，枸杞滋肝阴，一清一补，协同增效",
+      score: 5,
+      description: "菊花清肝明目、清热解毒，枸杞滋补肝肾、益精明目。二者搭配，清补兼施，既能清肝火又不伤肝阴，是经典的护眼搭配。",
+      suitableFor: ["用眼过度", "肝火旺盛", "眼睛干涩"],
+      brewing: "先放枸杞用沸水冲泡3分钟，再加入菊花焖泡2分钟"
+    },
+    {
+      materials: ["red_date", "longan"],
+      type: "synergy",
+      name: "补气养血",
+      effect: "红枣补中益气，桂圆养血安神，气血双补",
+      score: 5,
+      description: "红枣补中益气、养血安神，桂圆补心脾、益气血。二者搭配，气血双补，适合气血不足、面色苍白者。",
+      suitableFor: ["气血不足", "面色苍白", "失眠多梦", "产后调理"],
+      brewing: "红枣去核撕开，与桂圆一起用沸水冲泡，焖10分钟"
+    },
+    {
+      materials: ["rose", "red_date"],
+      type: "synergy",
+      name: "疏肝养血",
+      effect: "玫瑰花疏肝解郁，红枣养血安神，肝血同调",
+      score: 5,
+      description: "玫瑰花疏肝解郁、活血止痛，红枣补中益气、养血安神。二者搭配，既能疏肝理气又能养血安神，适合女性日常调理。",
+      suitableFor: ["情绪低落", "经前不适", "面色暗沉", "肝气郁结"],
+      brewing: "红枣先去核撕开，用沸水冲泡5分钟，待水温降至80度再加入玫瑰花"
+    },
+    {
+      materials: ["goji", "longan"],
+      type: "synergy",
+      name: "滋补肝肾",
+      effect: "枸杞滋肝明目，桂圆养心安神，肝肾同补",
+      score: 4,
+      description: "枸杞滋补肝肾、益精明目，桂圆补心脾、益气血。二者搭配，肝肾同补，适合长期熬夜、用眼过度者。",
+      suitableFor: ["熬夜伤神", "眼睛干涩", "心悸失眠", "肝肾不足"],
+      brewing: "枸杞与桂圆一起用沸水冲泡，焖5-8分钟"
+    },
+    {
+      materials: ["astragalus", "red_date"],
+      type: "synergy",
+      name: "益气补血",
+      effect: "黄芪补气固表，红枣养血安神，气血双补",
+      score: 5,
+      description: "黄芪补气升阳、固表止汗，红枣补中益气、养血安神。气能生血，二者搭配，气血双补效果更佳。",
+      suitableFor: ["气虚乏力", "易感冒", "面色萎黄", "术后恢复"],
+      brewing: "黄芪先煮10分钟，再加入红枣焖泡10分钟"
+    },
+    {
+      materials: ["tangerine_peel", "puerh_tea"],
+      type: "synergy",
+      name: "理气消食",
+      effect: "陈皮理气健脾，普洱消食去腻，消补兼施",
+      score: 5,
+      description: "陈皮理气健脾、燥湿化痰，普洱茶消食去腻、降脂减肥。二者搭配，既能消食又能理气，适合饭后饮用。",
+      suitableFor: ["消化不良", "腹胀", "油腻饮食后", "痰湿体质"],
+      brewing: "普洱先洗茶，与陈皮一起用沸水冲泡，焖3-5分钟"
+    },
+    {
+      materials: ["ginger", "red_date"],
+      type: "synergy",
+      name: "温中散寒",
+      effect: "生姜温中散寒，红枣补气养血，温补脾胃",
+      score: 4,
+      description: "生姜温中散寒、发汗解表，红枣补中益气、养血安神。二者搭配，温补脾胃，适合寒性体质和冬季饮用。",
+      suitableFor: ["脾胃虚寒", "手脚冰凉", "风寒感冒", "经期腹痛"],
+      brewing: "生姜切片，与红枣一起用沸水冲泡，焖5分钟"
+    },
+    {
+      materials: ["hawthorn", "goji"],
+      type: "synergy",
+      name: "消补兼施",
+      effect: "山楂消食化积，枸杞滋补肝肾，消补平衡",
+      score: 4,
+      description: "山楂消食化积、活血散瘀，枸杞滋补肝肾、益精明目。二者搭配，消补兼施，既能消食又不伤正气。",
+      suitableFor: ["肉食积滞", "高血脂", "消化不良", "肝肾不足"],
+      brewing: "山楂与枸杞一起用沸水冲泡，焖5-8分钟"
+    },
+    // 性味中和组合
+    {
+      materials: ["chrysanthemum", "goji", "red_date"],
+      type: "neutralize",
+      name: "清补平衡",
+      effect: "菊花寒性被红枣温性中和，枸杞平性调和，适合更多人",
+      score: 5,
+      description: "菊花性微寒，单独饮用不适合脾胃虚寒者。加入温性的红枣中和寒性，再加平性的枸杞调和，使整体性味更加平和，适合更多人饮用。",
+      suitableFor: ["大多数人", "办公室人群", "日常保健"],
+      brewing: "红枣先去核，与枸杞一起沸水冲泡3分钟，再加入菊花焖2分钟"
+    },
+    {
+      materials: ["honeysuckle", "ginger"],
+      type: "neutralize",
+      name: "寒温并用",
+      effect: "金银花寒性被生姜温性中和，清热解毒不伤胃",
+      score: 3,
+      description: "金银花性寒，生姜性温。二者搭配，寒温并用，既能清热解毒又不伤脾胃。但配伍较为特殊，需根据体质调整比例。",
+      suitableFor: ["外感风热兼有胃寒", "夏季防暑"],
+      brewing: "生姜先泡2分钟，再加入金银花焖泡3分钟"
+    },
+    // 功效冲突组合（避免）
+    {
+      materials: ["chrysanthemum", "ginger"],
+      type: "conflict",
+      name: "寒温相冲",
+      effect: "菊花寒凉清热，生姜温热散寒，功效相互抵消",
+      score: 1,
+      description: "菊花性微寒，功效为清热；生姜性温，功效为散寒。二者功效方向相反，搭配后效果相互抵消，不建议同时使用。",
+      suitableFor: [],
+      brewing: "不建议搭配",
+      warning: "功效冲突，建议分开饮用或选择其中一种"
+    },
+    {
+      materials: ["honeysuckle", "astragalus"],
+      type: "conflict",
+      name: "清补相冲",
+      effect: "金银花清热解毒，黄芪补气固表，一清一补相互抵消",
+      score: 1,
+      description: "金银花清热解毒，黄芪补气固表。一清一补，功效方向相反。感冒初期需要清热时不宜加黄芪，补气时不宜加金银花。",
+      suitableFor: [],
+      brewing: "不建议搭配",
+      warning: "功效冲突，建议根据症状选择其中一种"
+    },
+    {
+      materials: ["honeysuckle", "red_date"],
+      type: "conflict",
+      name: "寒温相冲",
+      effect: "金银花寒凉清热，红枣温补脾胃，功效相互抵消",
+      score: 2,
+      description: "金银花性寒清热，红枣性温补脾。二者搭配，寒温相冲，效果相互抵消。如需清热解毒，不宜加红枣；如需温补，不宜加金银花。",
+      suitableFor: [],
+      brewing: "不建议搭配",
+      warning: "功效相冲，建议根据需求选择其中一种"
+    },
+    // 需谨慎的组合
+    {
+      materials: ["astragalus", "rose"],
+      type: "caution",
+      name: "补气行气",
+      effect: "黄芪补气，玫瑰花行气，需注意用量比例",
+      score: 3,
+      description: "黄芪补气升阳，玫瑰花行气解郁。气虚者可搭配使用，但需注意黄芪用量宜大、玫瑰花用量宜小，否则行气太过反而耗气。",
+      suitableFor: ["气虚兼有气郁", "情绪低落伴乏力"],
+      brewing: "黄芪10g先煮10分钟，再加入玫瑰花3朵焖泡2分钟",
+      warning: "气虚者黄芪用量宜大(10-15g)，玫瑰花用量宜小(2-3朵)"
+    },
+    {
+      materials: ["codonopsis", "rose"],
+      type: "caution",
+      name: "补气疏肝",
+      effect: "党参补气，玫瑰花疏肝，需注意用量",
+      score: 3,
+      description: "党参补中益气，玫瑰花疏肝解郁。气虚兼有肝郁者可搭配，但玫瑰花用量不宜过大，以免行气太过。",
+      suitableFor: ["气虚肝郁", "乏力伴情绪低落"],
+      brewing: "党参先煮15分钟，再加入玫瑰花焖泡2分钟",
+      warning: "玫瑰花用量不宜超过3朵"
+    },
+    {
+      materials: ["lemon", "goji"],
+      type: "caution",
+      name: "酸碱中和",
+      effect: "柠檬酸性，枸杞碱性，可能影响吸收",
+      score: 2,
+      description: "柠檬含大量柠檬酸，枸杞含多种生物碱。酸性环境可能影响枸杞中部分营养成分的吸收，建议间隔饮用。",
+      suitableFor: [],
+      brewing: "建议分开饮用，或柠檬用量减半",
+      warning: "建议间隔30分钟以上饮用"
+    }
+  ],
+
+  // 经典搭配方案（可收藏）
+  classicRecipes: [
+    {
+      id: "eye_care",
+      name: "护眼明目茶",
+      materials: ["chrysanthemum", "goji"],
+      effect: "清肝明目",
+      description: "适合长时间用眼、眼睛干涩者"
+    },
+    {
+      id: "blood_nourish",
+      name: "气血双补茶",
+      materials: ["red_date", "longan", "astragalus"],
+      effect: "补气养血",
+      description: "适合气血不足、面色苍白者"
+    },
+    {
+      id: "beauty_tea",
+      name: "美容养颜茶",
+      materials: ["rose", "red_date", "goji"],
+      effect: "疏肝养血",
+      description: "适合女性日常调理"
+    },
+    {
+      id: "digest_tea",
+      name: "消食去腻茶",
+      materials: ["tangerine_peel", "puerh_tea", "hawthorn"],
+      effect: "理气消食",
+      description: "适合饭后饮用，消食去腻"
+    },
+    {
+      id: "warm_tea",
+      name: "暖胃驱寒茶",
+      materials: ["ginger", "red_date"],
+      effect: "温中散寒",
+      description: "适合脾胃虚寒、手脚冰凉者"
+    },
+    {
+      id: "detox_tea",
+      name: "清热解毒茶",
+      materials: ["honeysuckle", "chrysanthemum"],
+      effect: "清热解毒",
+      description: "适合风热感冒、咽喉肿痛者"
+    }
+  ]
 };

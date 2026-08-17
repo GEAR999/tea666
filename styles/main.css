@@ -1617,3 +1617,378 @@ body,
   color: var(--color-text-secondary);
   flex: 1;
 }
+
+/* ========== Custom Pairing Entry ========== */
+.custom-pairing-entry {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #5a8e4b 100%);
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-pairing-entry:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.custom-pairing-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+
+.custom-pairing-info {
+  flex: 1;
+}
+
+.custom-pairing-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.custom-pairing-desc {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.custom-pairing-arrow {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ========== Classic Recipes ========== */
+.classic-recipe-card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.classic-recipe-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.classic-recipe-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.classic-recipe-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.classic-recipe-effect {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  background: rgba(123, 158, 107, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.classic-recipe-materials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.classic-recipe-materials span {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.classic-recipe-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* ========== Material Select Grid ========== */
+.selected-materials {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.selected-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.selected-empty {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.selected-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 16px;
+  font-size: 0.85rem;
+}
+
+.selected-tag .remove-tag {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.selected-tag .remove-tag:hover {
+  opacity: 1;
+}
+
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.category-filter .filter-btn {
+  padding: 8px 14px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-filter .filter-btn:hover,
+.category-filter .filter-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.material-select-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.material-select-item {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-card);
+}
+
+.material-select-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.material-select-item.selected {
+  border-color: var(--color-primary);
+  background: rgba(123, 158, 107, 0.1);
+}
+
+.material-select-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.material-select-item .item-emoji {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.material-select-item .item-name {
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+/* ========== Pairing Analysis ========== */
+.pairing-analysis {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.analysis-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.analysis-score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 1.2rem;
+}
+
+.analysis-score.score-excellent {
+  color: #4caf50;
+}
+
+.analysis-score.score-good {
+  color: #8bc34a;
+}
+
+.analysis-score.score-caution {
+  color: #ff9800;
+}
+
+.analysis-score.score-bad {
+  color: #f44336;
+}
+
+.analysis-content {
+  margin-bottom: 16px;
+}
+
+.analysis-section {
+  margin-bottom: 16px;
+}
+
+.analysis-section-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analysis-section-title .icon {
+  font-size: 1rem;
+}
+
+.analysis-section-content {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  padding-left: 24px;
+}
+
+.analysis-warning {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: var(--radius-btn);
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.analysis-warning .warning-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f44336;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.analysis-warning .warning-content {
+  font-size: 0.85rem;
+  color: #d32f2f;
+}
+
+.analysis-suitable {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 24px;
+}
+
+.analysis-suitable span {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  background: rgba(123, 158, 107, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.analysis-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.analysis-actions .btn-secondary {
+  flex: 1;
+  padding: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analysis-actions .btn-secondary:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* ========== Dark Mode: Custom Pairing ========== */
+.dark-mode .custom-pairing-entry {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #3a6c49 100%);
+}
+
+.dark-mode .analysis-warning {
+  background: rgba(244, 67, 54, 0.15);
+  border-color: rgba(244, 67, 54, 0.4);
+}
+
+.dark-mode .analysis-warning .warning-content {
+  color: #ef5350;
+}

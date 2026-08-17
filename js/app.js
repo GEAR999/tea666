@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initBodyTypePage();
   initContraindicationPage();
   initFavoritesPage();
+  initCustomPairing();
 });
 
 // ---- Theme Toggle (Dark Mode) ----
@@ -87,6 +88,26 @@ function switchTab(tab) {
   if (targetNav) targetNav.classList.add('active');
 
   // Scroll to top
+  window.scrollTo(0, 0);
+}
+
+// Show a specific page (for sub-pages like custom-pairing)
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  var targetPage = document.getElementById('page-' + pageId);
+  if (targetPage) targetPage.classList.add('active');
+  
+  // Update nav to show pairing as active
+  document.querySelectorAll('.nav-item').forEach(function(n) {
+    n.classList.remove('active');
+  });
+  if (pageId === 'custom-pairing') {
+    var pairingNav = document.querySelector('.nav-item[data-tab="pairing"]');
+    if (pairingNav) pairingNav.classList.add('active');
+  }
+  
   window.scrollTo(0, 0);
 }
 
@@ -1132,6 +1153,363 @@ function renderBodyTypeResults() {
   window.BREW_DATA_ALL = {};
   allItems.forEach(function(item) {
     window.BREW_DATA_ALL[item.id] = item;
+  });
+}
+
+// ---- CUSTOM PAIRING ----
+var selectedMaterials = [];
+var currentPairingFilter = 'all';
+
+function initCustomPairing() {
+  renderMaterialSelectGrid();
+  renderClassicRecipes();
+}
+
+function renderMaterialSelectGrid() {
+  var grid = document.getElementById('material-select-grid');
+  if (!grid) return;
+  
+  var allItems = [].concat(
+    TEA_DATA.categories.map(function(c) {
+      return { id: c.id, name: c.name, emoji: c.emoji, category: 'tea' };
+    }),
+    BREW_DATA.flowerTeas.map(function(t) { return { id: t.id, name: t.name, emoji: t.emoji, category: 'flower' }; }),
+    BREW_DATA.herbs.map(function(t) { return { id: t.id, name: t.name, emoji: t.emoji, category: 'herb' }; }),
+    BREW_DATA.wellnessTeas.map(function(t) { return { id: t.id, name: t.name, emoji: t.emoji, category: 'wellness' }; }),
+    BREW_DATA.fruitTeas.map(function(t) { return { id: t.id, name: t.name, emoji: t.emoji, category: 'fruit' }; })
+  );
+  
+  var filtered = currentPairingFilter === 'all' ? allItems : allItems.filter(function(item) {
+    return item.category === currentPairingFilter;
+  });
+  
+  grid.innerHTML = '';
+  filtered.forEach(function(item) {
+    var isSelected = selectedMaterials.indexOf(item.id) > -1;
+    var isDisabled = !isSelected && selectedMaterials.length >= 5;
+    
+    var div = document.createElement('div');
+    div.className = 'material-select-item' + (isSelected ? ' selected' : '') + (isDisabled ? ' disabled' : '');
+    div.innerHTML =
+      '<div class="item-emoji">' + item.emoji + '</div>' +
+      '<div class="item-name">' + item.name + '</div>';
+    
+    if (!isDisabled) {
+      div.onclick = function() { toggleMaterialSelection(item.id); };
+    }
+    
+    grid.appendChild(div);
+  });
+}
+
+function filterCustomPairing(category) {
+  currentPairingFilter = category;
+  
+  // Update active button
+  var buttons = document.querySelectorAll('#custom-pairing-filter .filter-btn');
+  buttons.forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-category') === category);
+  });
+  
+  renderMaterialSelectGrid();
+}
+
+function toggleMaterialSelection(itemId) {
+  var index = selectedMaterials.indexOf(itemId);
+  if (index > -1) {
+    selectedMaterials.splice(index, 1);
+  } else if (selectedMaterials.length < 5) {
+    selectedMaterials.push(itemId);
+  }
+  
+  updateSelectedMaterialsDisplay();
+  renderMaterialSelectGrid();
+  
+  if (selectedMaterials.length >= 2) {
+    analyzePairing();
+  } else {
+    document.getElementById('pairing-analysis').style.display = 'none';
+  }
+}
+
+function updateSelectedMaterialsDisplay() {
+  var list = document.getElementById('selected-materials-list');
+  var count = document.getElementById('selected-count');
+  
+  count.textContent = selectedMaterials.length;
+  
+  if (selectedMaterials.length === 0) {
+    list.innerHTML = '<div class="selected-empty">点击下方材料添加</div>';
+    return;
+  }
+  
+  var allItems = getAllBrewItems();
+  var html = '';
+  
+  selectedMaterials.forEach(function(id) {
+    var item = allItems.find(function(i) { return i.id === id; });
+    if (item) {
+      html +=
+        '<div class="selected-tag">' +
+          '<span>' + item.emoji + ' ' + item.name + '</span>' +
+          '<span class="remove-tag" onclick="toggleMaterialSelection(\'' + id + '\')">&times;</span>' +
+        '</div>';
+    }
+  });
+  
+  list.innerHTML = html;
+}
+
+function getAllBrewItems() {
+  return [].concat(
+    TEA_DATA.categories.map(function(c) {
+      return { id: c.id, name: c.name, emoji: c.emoji, category: 'tea', nature: c.nature || '' };
+    }),
+    BREW_DATA.flowerTeas,
+    BREW_DATA.herbs,
+    BREW_DATA.wellnessTeas,
+    BREW_DATA.fruitTeas
+  );
+}
+
+function analyzePairing() {
+  var analysisDiv = document.getElementById('pairing-analysis');
+  var scoreDiv = document.getElementById('analysis-score');
+  var contentDiv = document.getElementById('analysis-content');
+  
+  analysisDiv.style.display = 'block';
+  
+  // Find matching compatibility
+  var allItems = getAllBrewItems();
+  var selectedItems = selectedMaterials.map(function(id) {
+    return allItems.find(function(i) { return i.id === id; });
+  }).filter(Boolean);
+  
+  var compatibility = BREW_DATA.compatibility || [];
+  
+  // Check for exact match or partial match
+  var match = null;
+  var partialMatches = [];
+  
+  compatibility.forEach(function(comp) {
+    var compMaterials = comp.materials;
+    var allMatched = compMaterials.every(function(m) { return selectedMaterials.indexOf(m) > -1; });
+    var someMatched = compMaterials.some(function(m) { return selectedMaterials.indexOf(m) > -1; });
+    
+    if (allMatched && compMaterials.length === selectedMaterials.length) {
+      match = comp;
+    } else if (someMatched && compMaterials.length <= selectedMaterials.length) {
+      partialMatches.push(comp);
+    }
+  });
+  
+  // Determine score and type
+  var score, scoreClass, typeLabel, typeIcon;
+  
+  if (match) {
+    score = match.score;
+    if (match.type === 'synergy') {
+      typeLabel = '协同增效';
+      typeIcon = '✨';
+      scoreClass = score >= 4 ? 'score-excellent' : 'score-good';
+    } else if (match.type === 'neutralize') {
+      typeLabel = '性味中和';
+      typeIcon = '☯';
+      scoreClass = score >= 4 ? 'score-excellent' : 'score-good';
+    } else if (match.type === 'conflict') {
+      typeLabel = '功效冲突';
+      typeIcon = '⚠';
+      scoreClass = 'score-bad';
+    } else if (match.type === 'caution') {
+      typeLabel = '需谨慎';
+      typeIcon = '⚡';
+      scoreClass = 'score-caution';
+    }
+  } else if (partialMatches.length > 0) {
+    // Use the best partial match
+    var bestMatch = partialMatches.sort(function(a, b) { return b.score - a.score; })[0];
+    score = Math.max(2, bestMatch.score - 1);
+    typeLabel = '自定义搭配';
+    typeIcon = '🍵';
+    scoreClass = score >= 4 ? 'score-good' : 'score-caution';
+    match = bestMatch;
+  } else {
+    // No match found, calculate based on nature
+    score = calculateNatureCompatibility(selectedItems);
+    typeLabel = '自定义搭配';
+    typeIcon = '🍵';
+    scoreClass = score >= 4 ? 'score-good' : score >= 3 ? 'score-caution' : 'score-bad';
+  }
+  
+  // Render score
+  var stars = '';
+  for (var i = 0; i < 5; i++) {
+    stars += i < score ? '★' : '☆';
+  }
+  scoreDiv.className = 'analysis-score ' + scoreClass;
+  scoreDiv.innerHTML = stars;
+  
+  // Render content
+  var html = '';
+  
+  // Warning for conflicts
+  if (match && match.type === 'conflict') {
+    html +=
+      '<div class="analysis-warning">' +
+        '<div class="warning-title">⚠ 功效冲突</div>' +
+        '<div class="warning-content">' + (match.warning || match.description) + '</div>' +
+      '</div>';
+  }
+  
+  // Effect analysis
+  html +=
+    '<div class="analysis-section">' +
+      '<div class="analysis-section-title"><span class="icon">' + typeIcon + '</span> ' + typeLabel + '</div>' +
+      '<div class="analysis-section-content">' + (match ? match.description : generateDefaultDescription(selectedItems)) + '</div>' +
+    '</div>';
+  
+  // Brewing advice
+  if (match && match.brewing) {
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">🫖</span> 冲泡建议</div>' +
+        '<div class="analysis-section-content">' + match.brewing + '</div>' +
+      '</div>';
+  }
+  
+  // Suitable for
+  if (match && match.suitableFor && match.suitableFor.length > 0) {
+    html +=
+      '<div class="analysis-section">' +
+        '<div class="analysis-section-title"><span class="icon">👥</span> 适合人群</div>' +
+        '<div class="analysis-suitable">';
+    match.suitableFor.forEach(function(s) {
+      html += '<span>' + s + '</span>';
+    });
+    html += '</div></div>';
+  }
+  
+  // Caution warning
+  if (match && match.type === 'caution' && match.warning) {
+    html +=
+      '<div class="analysis-warning" style="background:rgba(255,152,0,0.1);border-color:rgba(255,152,0,0.3);">' +
+        '<div class="warning-title" style="color:#ff9800;">⚡ 用量提示</div>' +
+        '<div class="warning-content" style="color:#f57c00;">' + match.warning + '</div>' +
+      '</div>';
+  }
+  
+  contentDiv.innerHTML = html;
+}
+
+function calculateNatureCompatibility(items) {
+  // Simple nature compatibility check
+  var natureCount = { hot: 0, warm: 0, neutral: 0, cool: 0, cold: 0 };
+  
+  items.forEach(function(item) {
+    var nature = item.nature || '';
+    if (nature.indexOf('热') > -1) natureCount.hot++;
+    else if (nature.indexOf('温') > -1) natureCount.warm++;
+    else if (nature.indexOf('平') > -1 || nature.indexOf('甘') > -1) natureCount.neutral++;
+    else if (nature.indexOf('凉') > -1) natureCount.cool++;
+    else if (nature.indexOf('寒') > -1 || nature.indexOf('冷') > -1) natureCount.cold++;
+  });
+  
+  // Check for extreme imbalance
+  var hotTotal = natureCount.hot + natureCount.warm;
+  var coldTotal = natureCount.cool + natureCount.cold;
+  
+  if (hotTotal >= 3 || coldTotal >= 3) {
+    return 2; // Too extreme
+  } else if (hotTotal >= 2 && coldTotal >= 2) {
+    return 3; // Conflicting
+  } else if (natureCount.neutral >= 2) {
+    return 4; // Balanced
+  } else {
+    return 3; // Acceptable
+  }
+}
+
+function generateDefaultDescription(items) {
+  var names = items.map(function(i) { return i.name; }).join('、');
+  return names + '的搭配，建议根据个人体质适量饮用。如有不适，请停止饮用。';
+}
+
+function clearSelectedMaterials() {
+  selectedMaterials = [];
+  updateSelectedMaterialsDisplay();
+  renderMaterialSelectGrid();
+  document.getElementById('pairing-analysis').style.display = 'none';
+}
+
+function savePairingRecipe() {
+  if (selectedMaterials.length < 2) {
+    alert('请至少选择2种材料');
+    return;
+  }
+  
+  var allItems = getAllBrewItems();
+  var names = selectedMaterials.map(function(id) {
+    var item = allItems.find(function(i) { return i.id === id; });
+    return item ? item.name : '';
+  }).filter(Boolean);
+  
+  var recipeName = prompt('为这个搭配方案命名：', names.join('+') + '茶');
+  if (!recipeName) return;
+  
+  var favorites = JSON.parse(localStorage.getItem('teaFavorites') || '[]');
+  var recipe = {
+    id: 'custom_' + Date.now(),
+    name: recipeName,
+    materials: selectedMaterials.slice(),
+    isCustomRecipe: true,
+    createdAt: new Date().toISOString()
+  };
+  
+  favorites.push(recipe);
+  localStorage.setItem('teaFavorites', JSON.stringify(favorites));
+  
+  alert('搭配方案已保存到收藏！');
+}
+
+function renderClassicRecipes() {
+  var container = document.getElementById('classic-recipes');
+  if (!container) return;
+  
+  var recipes = BREW_DATA.classicRecipes || [];
+  var allItems = getAllBrewItems();
+  
+  container.innerHTML = '';
+  
+  recipes.forEach(function(recipe) {
+    var materialsHtml = '';
+    recipe.materials.forEach(function(id) {
+      var item = allItems.find(function(i) { return i.id === id; });
+      if (item) {
+        materialsHtml += '<span>' + item.emoji + ' ' + item.name + '</span>';
+      }
+    });
+    
+    var card = document.createElement('div');
+    card.className = 'classic-recipe-card';
+    card.innerHTML =
+      '<div class="classic-recipe-header">' +
+        '<div class="classic-recipe-name">' + recipe.name + '</div>' +
+        '<div class="classic-recipe-effect">' + recipe.effect + '</div>' +
+      '</div>' +
+      '<div class="classic-recipe-materials">' + materialsHtml + '</div>' +
+      '<div class="classic-recipe-desc">' + recipe.description + '</div>';
+    
+    card.onclick = function() {
+      selectedMaterials = recipe.materials.slice();
+      showPage('custom-pairing');
+      setTimeout(function() {
+        updateSelectedMaterialsDisplay();
+        renderMaterialSelectGrid();
+        analyzePairing();
+      }, 100);
+    };
+    
+    container.appendChild(card);
   });
 }
 
