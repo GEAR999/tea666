@@ -1543,6 +1543,7 @@ function analyzePairing() {
   // 调试日志：查看 selectedMaterials 数组内容
   console.log('=== 搭配检测调试信息 ===');
   console.log('selectedMaterials:', selectedMaterials);
+  console.log('selectedMaterials JSON:', JSON.stringify(selectedMaterials));
   console.log('selectedMaterials 长度:', selectedMaterials.length);
   
   analysisDiv.style.display = 'block';
@@ -1554,6 +1555,7 @@ function analyzePairing() {
   }).filter(Boolean);
   
   console.log('selectedItems:', selectedItems.map(function(i) { return i.name; }));
+  console.log('selectedItems JSON:', JSON.stringify(selectedItems.map(function(i) { return {id: i.id, name: i.name}; })));
   
   // Handle single material case
   if (selectedMaterials.length === 1) {
@@ -1661,12 +1663,11 @@ function renderMultipleMaterialsAnalysis(selectedItems, scoreDiv, contentDiv) {
   compatibility.forEach(function(comp) {
     var compMaterials = comp.materials;
     var allMatched = compMaterials.every(function(m) { return selectedMaterials.indexOf(m) > -1; });
-    var someMatched = compMaterials.some(function(m) { return selectedMaterials.indexOf(m) > -1; });
+    var onlySelectedUsed = compMaterials.every(function(m) { return selectedMaterials.indexOf(m) > -1; });
     
-    if (allMatched && compMaterials.length === selectedMaterials.length) {
+    // Only use exact match where all materials in the compatibility are selected
+    if (allMatched && onlySelectedUsed && compMaterials.length === selectedMaterials.length) {
       match = comp;
-    } else if (someMatched && compMaterials.length <= selectedMaterials.length) {
-      partialMatches.push(comp);
     }
   });
   
