@@ -1293,6 +1293,10 @@ function analyzePairing() {
   var scoreDiv = document.getElementById('analysis-score');
   var contentDiv = document.getElementById('analysis-content');
   
+  if (!analysisDiv || !scoreDiv || !contentDiv) {
+    return;
+  }
+  
   analysisDiv.style.display = 'block';
   
   // Find matching compatibility
