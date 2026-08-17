@@ -124,7 +124,7 @@
 
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="tea-search" placeholder="搜索茶类、名茶..." oninput="filterTeas()" />
+        <input type="text" id="tea-search" placeholder="搜索茶类、名茶..." oninput="debouncedFilterTeas()" />
       </div>
 
       <div class="tea-grid" id="tea-grid"></div>
@@ -245,7 +245,7 @@
       </div>
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="flower-search" placeholder="搜索花草茶..." oninput="filterBrewItems('flower')" />
+        <input type="text" id="flower-search" placeholder="搜索花草茶..." oninput="debouncedFilterBrewItems('flower')" />
       </div>
       <div class="tea-grid" id="flower-grid"></div>
     </div>
@@ -257,7 +257,7 @@
       </div>
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="herb-search" placeholder="搜索中药材..." oninput="filterBrewItems('herb')" />
+        <input type="text" id="herb-search" placeholder="搜索中药材..." oninput="debouncedFilterBrewItems('herb')" />
       </div>
       <div class="tea-grid" id="herb-grid"></div>
     </div>
@@ -269,7 +269,7 @@
       </div>
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="wellness-search" placeholder="搜索养生茶..." oninput="filterBrewItems('wellness')" />
+        <input type="text" id="wellness-search" placeholder="搜索养生茶..." oninput="debouncedFilterBrewItems('wellness')" />
       </div>
       <div class="tea-grid" id="wellness-grid"></div>
     </div>
@@ -281,7 +281,7 @@
       </div>
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="fruit-search" placeholder="搜索果茶..." oninput="filterBrewItems('fruit')" />
+        <input type="text" id="fruit-search" placeholder="搜索果茶..." oninput="debouncedFilterBrewItems('fruit')" />
       </div>
       <div class="tea-grid" id="fruit-grid"></div>
     </div>
@@ -294,7 +294,7 @@
       </div>
       <div class="search-bar">
         <span class="search-icon">&#x1F50D;</span>
-        <input type="text" id="pairing-search" placeholder="输入功效，如：清肝明目、补气养血..." oninput="searchPairing()" />
+        <input type="text" id="pairing-search" placeholder="输入功效，如：清肝明目、补气养血..." oninput="debouncedSearchPairing()" />
       </div>
       <div class="effect-tags" id="effect-tags"></div>
       <div id="pairing-results"></div>
@@ -708,6 +708,7 @@
   <script src="/data/tea-data.js"></script>
   <script src="/data/brew-data.js"></script>
   <script src="/data/compatibility-data.js"></script>
+  <script src="/js/utils.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

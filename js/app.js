@@ -1,115 +1,8 @@
 // ==========================================
 // 泡饮百科 - 主应用逻辑
 // ==========================================
-
-// ---- State ----
-let currentTab = 'home';
-let currentRecType = 'body';
-let selectedRecOption = null;
-let timerState = {
-  running: false,
-  paused: false,
-  totalTime: 0,
-  remaining: 0,
-  interval: null,
-  selectedTea: null,
-  currentInfusion: 0,
-  infusionTimes: []
-};
-let currentBrewItem = null;
-let favoritesData = { materialIds: [], recipes: [] };
-let selectedBodyType = null;
-let selectedContraindications = [];
-
-// ---- Daily Tips ----
-const DAILY_TIPS = [
-  "绿茶用80\u00B0C水冲泡最佳，水温过高会破坏茶叶中的维生素C，使茶汤变苦。",
-  "紫砂壶讲究「一壶一茶」，避免不同茶香互相串味，影响品饮体验。",
-  "空腹不宜饮茶，茶中的咖啡碱会刺激胃黏膜，容易引起不适。",
-  "白茶有「一年茶、三年药、七年宝」之说，存放越久，口感越醇厚。",
-  "功夫茶泡法讲究「高冲低斟」，高冲激发茶香，低斟避免泡沫。",
-  "普洱茶分为生茶和熟茶，生茶性寒，熟茶性温，选择时需根据体质。",
-  "泡茶用水以山泉水为佳，其次是纯净水，自来水需静置去氯后再用。",
-  "饭后不宜立即饮茶，茶中的鞣酸会影响蛋白质和铁质的吸收。",
-  "乌龙茶最适合用功夫泡法，小壶小杯，能充分品味其香气层次。",
-  "茶叶保存需避光、防潮、防异味，绿茶宜冷藏，普洱宜常温通风存放。",
-  "黄茶产量稀少，仅占中国茶叶总产量的不到1%，是难得的茶中珍品。",
-  "红茶是世界上饮用范围最广的茶类，在英国、印度、斯里兰卡广受欢迎。"
-];
-
-// ---- Initialization ----
-document.addEventListener('DOMContentLoaded', function() {
-  initTheme();
-  initHomePage();
-  initTeasPage();
-  initRecommendPage();
-  initTimerPage();
-  initProfilePage();
-  initQuotesCarousel();
-  initCategoryPages();
-  initPairingPage();
-  initBodyTypePage();
-  initContraindicationPage();
-  initFavoritesPage();
-  initCustomPairing();
-});
-
-// ---- Theme Toggle (Dark Mode) ----
-function initTheme() {
-  var savedTheme = localStorage.getItem('tea-app-theme');
-  if (savedTheme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }
-}
-
-function toggleTheme() {
-  var currentTheme = document.documentElement.getAttribute('data-theme');
-  var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('tea-app-theme', newTheme);
-}
-
-// ---- Tab Navigation ----
-function switchTab(tab) {
-  currentTab = tab;
-
-  // Update pages
-  document.querySelectorAll('.page').forEach(function(p) {
-    p.classList.remove('active');
-  });
-  var targetPage = document.getElementById('page-' + tab);
-  if (targetPage) targetPage.classList.add('active');
-
-  // Update nav
-  document.querySelectorAll('.nav-item').forEach(function(n) {
-    n.classList.remove('active');
-  });
-  var targetNav = document.querySelector('.nav-item[data-tab="' + tab + '"]');
-  if (targetNav) targetNav.classList.add('active');
-
-  // Scroll to top
-  window.scrollTo(0, 0);
-}
-
-// Show a specific page (for sub-pages like custom-pairing)
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(function(p) {
-    p.classList.remove('active');
-  });
-  var targetPage = document.getElementById('page-' + pageId);
-  if (targetPage) targetPage.classList.add('active');
-  
-  // Update nav to show pairing as active
-  document.querySelectorAll('.nav-item').forEach(function(n) {
-    n.classList.remove('active');
-  });
-  if (pageId === 'custom-pairing') {
-    var pairingNav = document.querySelector('.nav-item[data-tab="pairing"]');
-    if (pairingNav) pairingNav.classList.add('active');
-  }
-  
-  window.scrollTo(0, 0);
-}
+// 依赖: utils.js (工具函数、全局状态、导航)
+// ==========================================
 
 // ---- HOME PAGE ----
 function initHomePage() {
@@ -267,6 +160,10 @@ function initTeasPage() {
 function renderTeaGrid(categories) {
   var grid = document.getElementById('tea-grid');
   grid.innerHTML = '';
+  if (categories.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>未找到相关茶类</p></div>';
+    return;
+  }
   categories.forEach(function(cat) {
     var div = document.createElement('div');
     div.className = 'tea-card';
@@ -294,6 +191,7 @@ function filterTeas() {
   });
   renderTeaGrid(filtered);
 }
+var debouncedFilterTeas = debounce(filterTeas, 300);
 
 // ---- TEA DETAIL ----
 function openTeaDetail(teaId) {
@@ -815,6 +713,10 @@ function filterBrewItems(category) {
   });
   
   grid.innerHTML = '';
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>未找到相关内容</p></div>';
+    return;
+  }
   filtered.forEach(function(item) {
     var card = document.createElement('div');
     card.className = 'tea-card';
@@ -828,6 +730,9 @@ function filterBrewItems(category) {
     grid.appendChild(card);
   });
 }
+var debouncedFilterBrewItems = debounce(function(category) {
+  filterBrewItems(category);
+}, 300);
 
 function switchToCategory(category) {
   switchTab(category);
@@ -1074,7 +979,7 @@ function searchPairing() {
   });
   
   if (matchingEffects.length === 0) {
-    resultsDiv.innerHTML = '<div class="empty-state"><p>未找到相关搭配</p></div>';
+    resultsDiv.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>未找到相关搭配</p></div>';
     return;
   }
   
@@ -1123,6 +1028,7 @@ function searchPairing() {
     resultsDiv.appendChild(card);
   });
 }
+var debouncedSearchPairing = debounce(searchPairing, 300);
 
 // ---- BODY TYPE QUERY ----
 function initBodyTypePage() {
@@ -1393,6 +1299,7 @@ function toggleMaterialSelection(itemId) {
     selectedMaterials.push(itemId);
   }
   
+  vibrateFeedback();
   updateSelectedMaterialsDisplay();
   renderMaterialSelectGrid();
   
@@ -1432,7 +1339,10 @@ function updateSelectedMaterialsDisplay() {
 }
 
 function getAllBrewItems() {
-  return [].concat(
+  // Cache the result to avoid repeated array creation
+  if (getAllBrewItems._cache) return getAllBrewItems._cache;
+  
+  var result = [].concat(
     TEA_DATA.categories.map(function(c) {
       return {
         id: c.id,
@@ -1529,6 +1439,9 @@ function getAllBrewItems() {
       };
     })
   );
+  
+  getAllBrewItems._cache = result;
+  return result;
 }
 
 function analyzePairing() {
@@ -1540,12 +1453,6 @@ function analyzePairing() {
     return;
   }
   
-  // 调试日志：查看 selectedMaterials 数组内容
-  console.log('=== 搭配检测调试信息 ===');
-  console.log('selectedMaterials:', selectedMaterials);
-  console.log('selectedMaterials JSON:', JSON.stringify(selectedMaterials));
-  console.log('selectedMaterials 长度:', selectedMaterials.length);
-  
   analysisDiv.style.display = 'block';
   
   // Find matching compatibility
@@ -1553,9 +1460,6 @@ function analyzePairing() {
   var selectedItems = selectedMaterials.map(function(id) {
     return allItems.find(function(i) { return i.id === id; });
   }).filter(Boolean);
-  
-  console.log('selectedItems:', selectedItems.map(function(i) { return i.name; }));
-  console.log('selectedItems JSON:', JSON.stringify(selectedItems.map(function(i) { return {id: i.id, name: i.name}; })));
   
   // Handle single material case
   if (selectedMaterials.length === 1) {
@@ -2216,7 +2120,7 @@ function clearSelectedMaterials() {
 
 function savePairingRecipe() {
   if (selectedMaterials.length < 1) {
-    alert('请至少选择1种材料');
+    showToast('请至少选择1种材料');
     return;
   }
   
@@ -2244,7 +2148,7 @@ function savePairingRecipe() {
   favoritesData.recipes.push(recipe);
   saveFavoritesData();
   
-  alert('搭配方案已保存到收藏！');
+  showToast('搭配方案已保存到收藏！');
 }
 
 function renderClassicRecipes() {

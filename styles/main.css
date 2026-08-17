@@ -65,15 +65,15 @@ body {
   padding: 0 16px 24px;
   padding-bottom: calc(var(--nav-height) + 24px);
   min-height: calc(100vh - var(--nav-height));
-  animation: fadeIn 0.2s ease;
 }
 
 .page.active {
   display: block;
+  animation: fadeInUp 0.25s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -296,16 +296,24 @@ body {
   background: var(--color-bg);
   z-index: 200;
   overflow-y: auto;
-  animation: slideUp 0.25s ease;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .detail-overlay.active {
   display: block;
+  opacity: 1;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+.detail-overlay .detail-content {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease;
+}
+
+.detail-overlay.active .detail-content {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .detail-content {
@@ -2198,4 +2206,145 @@ body,
 
 .dark-mode .reference-list li {
   background: var(--color-card);
+}
+
+/* ========== Skeleton Loading ========== */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-border);
+  border-radius: var(--radius-btn);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-card {
+  height: 80px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-card);
+}
+
+.skeleton-line {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+.skeleton-line.medium {
+  width: 80%;
+}
+
+/* ========== Empty State ========== */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-secondary);
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========== Card Active Feedback ========== */
+.tea-card:active,
+.quick-action:active,
+.pairing-card:active,
+.material-select-item:active,
+.classic-recipe-card:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  transition: transform 0.1s, opacity 0.1s;
+}
+
+/* ========== Search Bar Focus ========== */
+.search-bar input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(123, 158, 107, 0.15);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* ========== Nav Item Active Feedback ========== */
+.nav-item:active {
+  transform: scale(0.92);
+  transition: transform 0.1s;
+}
+
+/* ========== Toast Notification ========== */
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-height) + 24px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== Dark Mode Skeleton ========== */
+.dark-mode .skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+}
+
+/* ========== Button Active Effect ========== */
+.timer-btn:active,
+.filter-btn:active,
+.rec-tab:active,
+.btn-secondary:active {
+  transform: scale(0.95);
+  transition: transform 0.1s;
+}
+
+/* ========== Performance: CSS Containment ========== */
+.tea-card,
+.pairing-card,
+.classic-recipe-card,
+.teaware-card {
+  contain: layout style paint;
+}
+
+/* ========== Performance: Reduce paint on scroll ========== */
+.page {
+  contain: layout style;
+}
+
+.page.active {
+  contain: none;
 }
