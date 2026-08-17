@@ -1,33 +1,231 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="扣子编程，你的 AI 开发伙伴已就位" />
-    <title>扣子编程 - AI 开发伙伴</title>
-    <link rel="stylesheet" href="/styles/main.css" />
-  </head>
-  <body>
-    <div id="app">
-      <main class="main-wrapper">
-        <div class="content-container">
-          <img
-            src="https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze-coding/icon/coze-coding.gif"
-            alt="扣子编程 Logo"
-            class="logo-image"
-          />
-          <div>
-            <div class="text-container">
-              <h1 class="heading">
-                应用开发中
-              </h1>
-              <p class="description">
-                请稍后，页面即将呈现
-              </p>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="泡茶知识助手 - 六大茶类百科、智能推荐、冲泡计时器" />
+  <meta name="theme-color" content="#FAF7F0" />
+  <title>泡茶知识助手</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ========== HOME PAGE ========== -->
+    <div id="page-home" class="page active">
+      <div class="home-hero">
+        <div class="hero-title">泡茶知识助手</div>
+        <div class="hero-subtitle">一杯好茶，从了解开始</div>
+      </div>
+
+      <div class="home-quick-actions">
+        <div class="quick-action" onclick="switchTab('teas')">
+          <span class="qa-icon">&#x1F343;</span>
+          <span class="qa-label">茶类百科</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('recommend')">
+          <span class="qa-icon">&#x1F9ED;</span>
+          <span class="qa-label">智能推荐</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('timer')">
+          <span class="qa-icon">&#x23F1;</span>
+          <span class="qa-label">冲泡计时</span>
+        </div>
+        <div class="quick-action" onclick="switchTab('profile')">
+          <span class="qa-icon">&#x1F376;</span>
+          <span class="qa-label">茶具指南</span>
+        </div>
+      </div>
+
+      <div id="home-season-section">
+        <div class="home-season-card" id="season-card">
+          <h3><span id="season-emoji"></span><span id="season-title"></span></h3>
+          <p id="season-advice"></p>
+        </div>
+      </div>
+
+      <div class="section-title">六大茶类</div>
+      <div class="home-tea-row" id="home-tea-row"></div>
+
+      <div class="section-title">今日茶知识</div>
+      <div class="card" id="daily-tip-card" style="cursor: default;">
+        <p id="daily-tip" style="font-size: 0.9rem; line-height: 1.7; color: var(--color-text-secondary);"></p>
+      </div>
+    </div>
+
+    <!-- ========== TEAS PAGE ========== -->
+    <div id="page-teas" class="page">
+      <div class="page-header">
+        <h1>茶类百科</h1>
+        <p>探索六大茶类的奥秘</p>
+      </div>
+
+      <div class="search-bar">
+        <span class="search-icon">&#x1F50D;</span>
+        <input type="text" id="tea-search" placeholder="搜索茶类、名茶..." oninput="filterTeas()" />
+      </div>
+
+      <div class="tea-grid" id="tea-grid"></div>
+    </div>
+
+    <!-- ========== RECOMMEND PAGE ========== -->
+    <div id="page-recommend" class="page">
+      <div class="page-header">
+        <h1>智能推荐</h1>
+        <p>为你找到最合适的茶</p>
+      </div>
+
+      <div class="rec-tabs">
+        <div class="rec-tab active" data-rec-type="body" onclick="switchRecTab('body')">按体质</div>
+        <div class="rec-tab" data-rec-type="scene" onclick="switchRecTab('scene')">按场景</div>
+        <div class="rec-tab" data-rec-type="time" onclick="switchRecTab('time')">按时间</div>
+      </div>
+
+      <div id="rec-content"></div>
+
+      <div class="rec-result" id="rec-result">
+        <h3 id="rec-result-title">推荐结果</h3>
+        <div class="rec-advice" id="rec-advice-text"></div>
+        <div class="section-subtitle">推荐茶类</div>
+        <div class="rec-tea-chips" id="rec-tea-chips"></div>
+      </div>
+    </div>
+
+    <!-- ========== TIMER PAGE ========== -->
+    <div id="page-timer" class="page">
+      <div class="page-header">
+        <h1>冲泡计时器</h1>
+        <p>精准掌控每一泡</p>
+      </div>
+
+      <div class="timer-container">
+        <div class="timer-tea-select">
+          <label>选择茶类</label>
+          <div class="timer-tea-grid" id="timer-tea-grid"></div>
+        </div>
+
+        <div class="timer-ring-wrapper">
+          <svg class="timer-ring-svg" viewBox="0 0 220 220">
+            <circle class="timer-ring-bg" cx="110" cy="110" r="100" />
+            <circle class="timer-ring-progress" id="timer-progress" cx="110" cy="110" r="100"
+              stroke-dasharray="628.32" stroke-dashoffset="0" />
+          </svg>
+          <div class="timer-display" id="timer-display">
+            <div class="timer-time" id="timer-time">00:00</div>
+            <div class="timer-label" id="timer-status">选择茶类开始</div>
           </div>
         </div>
-      </main>
+
+        <div class="timer-controls">
+          <button class="timer-btn timer-btn-primary" id="timer-start-btn" onclick="toggleTimer()">开始</button>
+          <button class="timer-btn timer-btn-secondary" onclick="resetTimer()">重置</button>
+        </div>
+
+        <div class="timer-infusion-info" id="infusion-info" style="display:none;">
+          <h4>冲泡进度</h4>
+          <div class="infusion-list" id="infusion-list"></div>
+        </div>
+      </div>
     </div>
-  </body>
+
+    <!-- ========== PROFILE PAGE (Teaware + About) ========== -->
+    <div id="page-profile" class="page">
+      <div class="page-header">
+        <h1>茶具与更多</h1>
+        <p>茶具指南与个人中心</p>
+      </div>
+
+      <div class="section-title">茶具指南</div>
+      <div id="teaware-list"></div>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <div class="section-title">季节饮茶</div>
+      <div id="season-list"></div>
+
+      <div class="divider" style="margin: 24px 0;"></div>
+
+      <div class="profile-section">
+        <div class="profile-item" onclick="showAbout()">
+          <span class="item-icon">&#x2139;</span>
+          <span class="item-text">关于泡茶知识助手</span>
+          <span class="item-arrow">&#x203A;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TEA DETAIL OVERLAY ========== -->
+    <div class="detail-overlay" id="tea-detail">
+      <div class="detail-content">
+        <div class="detail-header">
+          <button class="detail-back" onclick="closeTeaDetail()">&#x2190;</button>
+          <h2 id="detail-title"></h2>
+        </div>
+        <div class="detail-hero">
+          <span class="hero-emoji" id="detail-emoji"></span>
+          <div class="hero-name" id="detail-name"></div>
+          <div class="hero-ferment" id="detail-ferment"></div>
+        </div>
+        <div class="detail-section">
+          <h3>简介</h3>
+          <p id="detail-desc"></p>
+        </div>
+        <div class="detail-section">
+          <h3>冲泡参数</h3>
+          <div class="info-grid" id="detail-brewing"></div>
+        </div>
+        <div class="detail-section">
+          <h3>代表名茶</h3>
+          <div class="famous-tea-list" id="detail-famous"></div>
+        </div>
+        <div class="detail-section">
+          <h3>推荐茶具</h3>
+          <div class="famous-tea-list" id="detail-teaware"></div>
+        </div>
+        <div class="detail-section">
+          <h3>保健功效</h3>
+          <ul class="benefit-list" id="detail-benefits"></ul>
+        </div>
+        <div class="detail-section">
+          <h3>适合体质</h3>
+          <div class="famous-tea-list" id="detail-suitable"></div>
+        </div>
+        <div class="detail-section">
+          <h3>饮用禁忌</h3>
+          <ul class="taboo-list" id="detail-taboos"></ul>
+        </div>
+        <div class="detail-section">
+          <h3>最佳季节</h3>
+          <p id="detail-season"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== BOTTOM NAVIGATION ========== -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
+        <span class="nav-icon">&#x1F3E0;</span>
+        <span class="nav-label">首页</span>
+      </button>
+      <button class="nav-item" data-tab="teas" onclick="switchTab('teas')">
+        <span class="nav-icon">&#x1F343;</span>
+        <span class="nav-label">茶类</span>
+      </button>
+      <button class="nav-item" data-tab="recommend" onclick="switchTab('recommend')">
+        <span class="nav-icon">&#x1F9ED;</span>
+        <span class="nav-label">推荐</span>
+      </button>
+      <button class="nav-item" data-tab="timer" onclick="switchTab('timer')">
+        <span class="nav-icon">&#x23F1;</span>
+        <span class="nav-label">计时器</span>
+      </button>
+      <button class="nav-item" data-tab="profile" onclick="switchTab('profile')">
+        <span class="nav-icon">&#x1F464;</span>
+        <span class="nav-label">我的</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="/data/tea-data.js"></script>
+  <script src="/js/app.js"></script>
+</body>
 </html>
