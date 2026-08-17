@@ -17,7 +17,7 @@ let timerState = {
   infusionTimes: []
 };
 let currentBrewItem = null;
-let favorites = JSON.parse(localStorage.getItem('brew-favorites') || '[]');
+let favoritesData = { materialIds: [], recipes: [] };
 let selectedBodyType = null;
 let selectedContraindications = [];
 
@@ -899,19 +899,53 @@ function closeBrewDetail() {
 }
 
 // ---- FAVORITES ----
+// 统一收藏数据结构：{ materialIds: [...], recipes: [...] }
+var STORAGE_KEY = 'brew-favorites';
+
+function loadFavoritesData() {
+  try {
+    var saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      favoritesData = JSON.parse(saved);
+      // 兼容旧数据格式
+      if (Array.isArray(favoritesData)) {
+        favoritesData = { materialIds: favoritesData, recipes: [] };
+      }
+    }
+    // 兼容旧的teaFavorites数据
+    var oldRecipes = JSON.parse(localStorage.getItem('teaFavorites') || '[]');
+    if (oldRecipes.length > 0 && (!favoritesData.recipes || favoritesData.recipes.length === 0)) {
+      favoritesData.recipes = oldRecipes;
+      localStorage.removeItem('teaFavorites');
+    }
+  } catch (e) {
+    favoritesData = { materialIds: [], recipes: [] };
+  }
+}
+
+function saveFavoritesData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favoritesData));
+}
+
+// 初始化加载
+loadFavoritesData();
+
+var favorites = favoritesData.materialIds; // 保持向后兼容
+
 function toggleFavorite() {
   if (!currentBrewItem) return;
   
   var itemId = currentBrewItem.id;
-  var index = favorites.indexOf(itemId);
+  var index = favoritesData.materialIds.indexOf(itemId);
   
   if (index > -1) {
-    favorites.splice(index, 1);
+    favoritesData.materialIds.splice(index, 1);
   } else {
-    favorites.push(itemId);
+    favoritesData.materialIds.push(itemId);
   }
   
-  localStorage.setItem('brew-favorites', JSON.stringify(favorites));
+  favorites = favoritesData.materialIds; // 同步
+  saveFavoritesData();
   updateFavoriteButton();
   renderFavoritesGrid();
 }
@@ -923,7 +957,7 @@ function updateFavoriteButton() {
   var icon = document.getElementById('favorite-icon');
   var text = document.getElementById('favorite-text');
   
-  var isFavorited = favorites.indexOf(currentBrewItem.id) > -1;
+  var isFavorited = favoritesData.materialIds.indexOf(currentBrewItem.id) > -1;
   
   if (isFavorited) {
     btn.classList.add('favorited');
@@ -946,7 +980,10 @@ function renderFavoritesGrid() {
   
   if (!grid) return;
   
-  if (favorites.length === 0) {
+  var hasMaterials = favoritesData.materialIds.length > 0;
+  var hasRecipes = favoritesData.recipes && favoritesData.recipes.length > 0;
+  
+  if (!hasMaterials && !hasRecipes) {
     grid.style.display = 'none';
     emptyState.style.display = 'block';
     return;
@@ -956,29 +993,52 @@ function renderFavoritesGrid() {
   emptyState.style.display = 'none';
   grid.innerHTML = '';
   
-  // Find all favorited items
-  var allItems = [].concat(
-    BREW_DATA.flowerTeas,
-    BREW_DATA.herbs,
-    BREW_DATA.wellnessTeas,
-    BREW_DATA.fruitTeas
-  );
-  
-  favorites.forEach(function(itemId) {
-    var item = allItems.find(function(i) { return i.id === itemId; });
-    if (!item) return;
+  // 渲染材料收藏
+  if (hasMaterials) {
+    var allItems = getAllBrewItems();
     
-    var card = document.createElement('div');
-    card.className = 'tea-card';
-    card.innerHTML =
-      '<div class="tea-emoji">' + item.emoji + '</div>' +
-      '<div class="tea-info">' +
-        '<div class="tea-name">' + item.name + '</div>' +
-        '<div class="tea-desc">' + item.nature + '</div>' +
-      '</div>';
-    card.onclick = function() { openBrewDetail(item); };
-    grid.appendChild(card);
-  });
+    favoritesData.materialIds.forEach(function(itemId) {
+      var item = allItems.find(function(i) { return i.id === itemId; });
+      if (!item) return;
+      
+      var card = document.createElement('div');
+      card.className = 'tea-card';
+      card.innerHTML =
+        '<div class="tea-emoji">' + item.emoji + '</div>' +
+        '<div class="tea-info">' +
+          '<div class="tea-name">' + item.name + '</div>' +
+          '<div class="tea-desc">' + item.nature + '</div>' +
+        '</div>';
+      card.onclick = function() { openBrewDetail(item); };
+      grid.appendChild(card);
+    });
+  }
+  
+  // 渲染搭配方案收藏
+  if (hasRecipes) {
+    favoritesData.recipes.forEach(function(recipe) {
+      var card = document.createElement('div');
+      card.className = 'tea-card recipe-card';
+      var materialsCount = recipe.materials ? recipe.materials.length : 0;
+      card.innerHTML =
+        '<div class="tea-emoji">🍵</div>' +
+        '<div class="tea-info">' +
+          '<div class="tea-name">' + recipe.name + '</div>' +
+          '<div class="tea-desc">' + materialsCount + '种材料搭配</div>' +
+        '</div>';
+      card.onclick = function() {
+        // 加载搭配方案
+        if (recipe.materials && recipe.materials.length > 0) {
+          selectedMaterials = recipe.materials.slice();
+          showPage('custom-pairing');
+          renderMaterialSelectGrid();
+          updateSelectedMaterialsDisplay();
+          analyzePairing();
+        }
+      };
+      grid.appendChild(card);
+    });
+  }
 }
 
 // ---- PAIRING QUERY ----
@@ -2162,7 +2222,6 @@ function savePairingRecipe() {
   var recipeName = prompt('为这个搭配方案命名：', defaultName);
   if (!recipeName) return;
   
-  var favorites = JSON.parse(localStorage.getItem('teaFavorites') || '[]');
   var recipe = {
     id: 'custom_' + Date.now(),
     name: recipeName,
@@ -2171,8 +2230,11 @@ function savePairingRecipe() {
     createdAt: new Date().toISOString()
   };
   
-  favorites.push(recipe);
-  localStorage.setItem('teaFavorites', JSON.stringify(favorites));
+  if (!favoritesData.recipes) {
+    favoritesData.recipes = [];
+  }
+  favoritesData.recipes.push(recipe);
+  saveFavoritesData();
   
   alert('搭配方案已保存到收藏！');
 }
