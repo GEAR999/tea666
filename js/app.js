@@ -1392,10 +1392,82 @@ function getAllBrewItems() {
         pairings: c.pairings || []
       };
     }),
-    BREW_DATA.flowerTeas,
-    BREW_DATA.herbs,
-    BREW_DATA.wellnessTeas,
-    BREW_DATA.fruitTeas
+    BREW_DATA.flowerTeas.map(function(item) {
+      return {
+        id: item.id,
+        name: item.name,
+        emoji: item.emoji,
+        category: item.category,
+        nature: item.nature || '',
+        effects: item.benefits || [],
+        suitableFor: item.suitablePeople || [],
+        contraindications: item.taboos ? item.taboos.unsuitable : [],
+        brewing: item.brewing ? {
+          temperature: item.brewing.waterTemp,
+          amount: item.brewing.amount,
+          time: item.brewing.time,
+          infusions: item.brewing.infusions
+        } : null,
+        pairings: item.pairings || []
+      };
+    }),
+    BREW_DATA.herbs.map(function(item) {
+      return {
+        id: item.id,
+        name: item.name,
+        emoji: item.emoji,
+        category: item.category,
+        nature: item.nature || '',
+        effects: item.benefits || [],
+        suitableFor: item.suitablePeople || [],
+        contraindications: item.taboos ? item.taboos.unsuitable : [],
+        brewing: item.brewing ? {
+          temperature: item.brewing.waterTemp,
+          amount: item.brewing.amount,
+          time: item.brewing.time,
+          infusions: item.brewing.infusions
+        } : null,
+        pairings: item.pairings || []
+      };
+    }),
+    BREW_DATA.wellnessTeas.map(function(item) {
+      return {
+        id: item.id,
+        name: item.name,
+        emoji: item.emoji,
+        category: item.category,
+        nature: item.nature || '',
+        effects: item.benefits || [],
+        suitableFor: item.suitablePeople || [],
+        contraindications: item.taboos ? item.taboos.unsuitable : [],
+        brewing: item.brewing ? {
+          temperature: item.brewing.waterTemp,
+          amount: item.brewing.amount,
+          time: item.brewing.time,
+          infusions: item.brewing.infusions
+        } : null,
+        pairings: item.pairings || []
+      };
+    }),
+    BREW_DATA.fruitTeas.map(function(item) {
+      return {
+        id: item.id,
+        name: item.name,
+        emoji: item.emoji,
+        category: item.category,
+        nature: item.nature || '',
+        effects: item.benefits || [],
+        suitableFor: item.suitablePeople || [],
+        contraindications: item.taboos ? item.taboos.unsuitable : [],
+        brewing: item.brewing ? {
+          temperature: item.brewing.waterTemp,
+          amount: item.brewing.amount,
+          time: item.brewing.time,
+          infusions: item.brewing.infusions
+        } : null,
+        pairings: item.pairings || []
+      };
+    })
   );
 }
 
