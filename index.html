@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="泡饮百科 - 花草茶、中药材、养生茶饮、果茶百科，智能搭配推荐" />
-  <meta name="theme-color" content="#FAF7F0" />
+  <meta name="theme-color" content="#7B9E6B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="泡饮百科" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
   <title>泡饮百科</title>
   <link rel="stylesheet" href="/styles/main.css" />
 </head>
@@ -724,5 +729,20 @@
   <script src="/data/compatibility-data.js"></script>
   <script src="/js/utils.js"></script>
   <script src="/js/app.js"></script>
+
+  <!-- Service Worker 注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('Service Worker 注册成功:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('Service Worker 注册失败:', error);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
