@@ -1540,6 +1540,11 @@ function analyzePairing() {
     return;
   }
   
+  // 调试日志：查看 selectedMaterials 数组内容
+  console.log('=== 搭配检测调试信息 ===');
+  console.log('selectedMaterials:', selectedMaterials);
+  console.log('selectedMaterials 长度:', selectedMaterials.length);
+  
   analysisDiv.style.display = 'block';
   
   // Find matching compatibility
@@ -1547,6 +1552,8 @@ function analyzePairing() {
   var selectedItems = selectedMaterials.map(function(id) {
     return allItems.find(function(i) { return i.id === id; });
   }).filter(Boolean);
+  
+  console.log('selectedItems:', selectedItems.map(function(i) { return i.name; }));
   
   // Handle single material case
   if (selectedMaterials.length === 1) {
