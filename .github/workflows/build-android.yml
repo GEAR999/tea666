@@ -56,8 +56,14 @@ jobs:
           # 增加 Gradle 内存
           export GRADLE_OPTS="-Xmx2048m"
           export _JAVA_OPTIONS="-Xmx2048m"
-          # 构建 debug APK
-          ./gradlew assembleDebug --stacktrace
+          # 显示 Gradle 版本
+          ./gradlew --version
+          # 清理并构建 debug APK
+          ./gradlew clean
+          ./gradlew assembleDebug --info 2>&1 | tee build.log
+          # 显示构建结果
+          echo "构建完成，检查输出..."
+          find . -name "*.apk" -type f
 
       - name: Find APK
         run: |
