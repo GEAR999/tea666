@@ -57,13 +57,21 @@ jobs:
           export GRADLE_OPTS="-Xmx2048m"
           export _JAVA_OPTIONS="-Xmx2048m"
           # 构建 debug APK
-          ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -100
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Find APK
+        run: |
+          echo "查找 APK 文件..."
+          find android -name "*.apk" -type f
+          APK_PATH=$(find android -name "*.apk" -type f | head -1)
+          echo "找到 APK: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: paoyin-baike-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ env.APK_PATH }}
           retention-days: 30
 
       - name: Create Release
