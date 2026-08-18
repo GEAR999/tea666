@@ -53,7 +53,11 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          # 增加 Gradle 内存
+          export GRADLE_OPTS="-Xmx2048m"
+          export _JAVA_OPTIONS="-Xmx2048m"
+          # 构建 debug APK
+          ./gradlew assembleDebug --stacktrace --info 2>&1 | tail -100
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
